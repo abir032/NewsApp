@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="newsCell" id="gTV-IL-0wX" customClass="NewsCollectionViewCell" customModule="MdFahimFaezAbir_30028" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="258" height="256"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="258" height="256"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sTl-9S-FJ5">
+                        <rect key="frame" x="0.0" y="0.0" width="258" height="256"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="world-news (1)" translatesAutoresizingMaskIntoConstraints="NO" id="l58-dX-vJm">
+                                <rect key="frame" x="0.0" y="0.0" width="258" height="160"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6cx-mx-gay">
+                                <rect key="frame" x="0.0" y="165" width="258" height="16"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="dsamffvbcxznvbdszvbxzcvdjfgdfsgdfsgsdf">
+                                        <attributes>
+                                            <font key="NSFont" size="13" name="BodoniSvtyTwoITCTT-Bold"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="justified" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CNNN News" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lT4-DA-pLO">
+                                <rect key="frame" x="0.0" y="191" width="48.5" height="10"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="8"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="27.10.2023" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M1l-w2-Z2i">
+                                <rect key="frame" x="214.5" y="191" width="43.5" height="10"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="8"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hab-9g-mpS">
+                                <rect key="frame" x="211.5" y="0.0" width="46.5" height="34"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" image="bookmark.fill" catalog="system"/>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jtz-uK-hEt">
+                                <rect key="frame" x="5" y="5" width="51" height="17"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="Category">
+                                        <attributes>
+                                            <color key="NSColor" red="0.93725490199999995" green="0.35686274509999999" blue="0.047058823530000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <font key="NSFont" size="14" name="BodoniSvtyTwoOSITCTT-Bold"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="jtz-uK-hEt" firstAttribute="top" secondItem="l58-dX-vJm" secondAttribute="top" constant="5" id="2qa-fL-Fit"/>
+                            <constraint firstItem="6cx-mx-gay" firstAttribute="leading" secondItem="sTl-9S-FJ5" secondAttribute="leading" id="6Ba-C2-bg2"/>
+                            <constraint firstItem="lT4-DA-pLO" firstAttribute="leading" secondItem="sTl-9S-FJ5" secondAttribute="leading" id="8EF-zS-1Vh"/>
+                            <constraint firstItem="M1l-w2-Z2i" firstAttribute="top" secondItem="6cx-mx-gay" secondAttribute="bottom" constant="10" id="8sd-yO-8F2"/>
+                            <constraint firstItem="Hab-9g-mpS" firstAttribute="trailing" secondItem="l58-dX-vJm" secondAttribute="trailing" id="KYR-7l-jbR"/>
+                            <constraint firstItem="l58-dX-vJm" firstAttribute="height" secondItem="sTl-9S-FJ5" secondAttribute="height" multiplier="0.625" id="LMD-nQ-Sp1"/>
+                            <constraint firstItem="l58-dX-vJm" firstAttribute="centerX" secondItem="sTl-9S-FJ5" secondAttribute="centerX" id="Qv9-W5-HRZ"/>
+                            <constraint firstItem="Hab-9g-mpS" firstAttribute="top" secondItem="l58-dX-vJm" secondAttribute="top" id="RRm-rv-OEL"/>
+                            <constraint firstAttribute="trailing" secondItem="M1l-w2-Z2i" secondAttribute="trailing" id="Vl8-d6-96L"/>
+                            <constraint firstItem="jtz-uK-hEt" firstAttribute="leading" secondItem="l58-dX-vJm" secondAttribute="leading" constant="5" id="Wag-oH-Y7M"/>
+                            <constraint firstItem="l58-dX-vJm" firstAttribute="top" secondItem="sTl-9S-FJ5" secondAttribute="top" id="cct-EN-SOA"/>
+                            <constraint firstItem="l58-dX-vJm" firstAttribute="leading" secondItem="sTl-9S-FJ5" secondAttribute="leading" id="e2d-kF-HUV"/>
+                            <constraint firstItem="lT4-DA-pLO" firstAttribute="top" secondItem="6cx-mx-gay" secondAttribute="bottom" constant="10" id="kSM-OH-SbJ"/>
+                            <constraint firstItem="6cx-mx-gay" firstAttribute="top" secondItem="l58-dX-vJm" secondAttribute="bottom" constant="5" id="ojy-Da-stm"/>
+                            <constraint firstItem="6cx-mx-gay" firstAttribute="centerX" secondItem="sTl-9S-FJ5" secondAttribute="centerX" id="zrU-5B-W6R"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="sTl-9S-FJ5" secondAttribute="trailing" id="74b-QV-7Ul"/>
+                <constraint firstAttribute="bottom" secondItem="sTl-9S-FJ5" secondAttribute="bottom" id="QCq-hF-18e"/>
+                <constraint firstItem="sTl-9S-FJ5" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="q2q-wj-aDN"/>
+                <constraint firstItem="sTl-9S-FJ5" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="wXO-GJ-WGY"/>
+            </constraints>
+            <size key="customSize" width="258" height="256"/>
+            <connections>
+                <outlet property="catgory" destination="jtz-uK-hEt" id="2uT-7p-e0J"/>
+                <outlet property="newsImage" destination="l58-dX-vJm" id="aqL-Ra-HXa"/>
+                <outlet property="publishDate" destination="M1l-w2-Z2i" id="rCU-s1-kWl"/>
+                <outlet property="source" destination="lT4-DA-pLO" id="yeL-iG-l4S"/>
+                <outlet property="title" destination="6cx-mx-gay" id="seS-3z-GyI"/>
+            </connections>
+            <point key="canvasLocation" x="-427" y="-649"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="bookmark.fill" catalog="system" width="110" height="128"/>
+        <image name="world-news (1)" width="512" height="512"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -1,0 +1,6 @@
+framework module Pods_MdFahimFaezAbir_30028 {
+  umbrella header "Pods-MdFahimFaezAbir-30028-umbrella.h"
+
+  export *
+  module * { export * }
+}
