@@ -39,7 +39,13 @@ class ViewController: UIViewController {
         setSearchBarImage()
         
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.isNavigationBarHidden = true
+       
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        navigationController?.isNavigationBarHidden = false
+    }
     // MARK: - URL gula vhul ache
     func setSearchBarImage(){
         let searchIcon  = UIImageView()
@@ -105,7 +111,8 @@ extension ViewController{
             if let showNewsVc = segue.destination as? ShowNewsVc{
                 if let row = indexPath?.row{
                     showNewsVc.titleFromVc  = newsFromDB[row].title ?? ""
-                    showNewsVc.dateFromVc =  newsFromDB[row].publishedAt ?? ""
+                    showNewsVc.dateFromVc =  TimeConvertion.shared.timeConvert(time: newsFromDB[row].publishedAt ?? " " )
+                   
                     showNewsVc.categoryFromVc = newsFromDB[row].category ?? ""
                     showNewsVc.imageFromVc = newsFromDB[row].urlToImage ?? ""
                     showNewsVc.descriptionFromVc = newsFromDB[row].newsDescription ?? ""
@@ -168,7 +175,7 @@ extension ViewController: UICollectionViewDataSource{
             }
             item.source.text = newsFromDB[indexPath.row].sourceName
             item.catgory.text = newsFromDB[indexPath.row].category
-            item.publishDate.text  = newsFromDB[indexPath.row].publishedAt
+            item.publishDate.text  = TimeConvertion.shared.timeConvert(time: newsFromDB[indexPath.row].publishedAt ?? " ")
             return item
             
         } else{
@@ -182,7 +189,7 @@ extension ViewController: UICollectionViewDataSource{
 }
 extension ViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        CGSize(width: 80, height: 70)
+        CGSize(width: 70, height: 80)
     }
     func gridView(){
         let insets = NSDirectionalEdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3)

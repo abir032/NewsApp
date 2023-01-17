@@ -79,6 +79,7 @@
                             <constraint firstItem="jtz-uK-hEt" firstAttribute="leading" secondItem="l58-dX-vJm" secondAttribute="leading" constant="5" id="Wag-oH-Y7M"/>
                             <constraint firstItem="l58-dX-vJm" firstAttribute="top" secondItem="sTl-9S-FJ5" secondAttribute="top" id="cct-EN-SOA"/>
                             <constraint firstItem="l58-dX-vJm" firstAttribute="leading" secondItem="sTl-9S-FJ5" secondAttribute="leading" id="e2d-kF-HUV"/>
+                            <constraint firstAttribute="trailing" secondItem="M1l-w2-Z2i" secondAttribute="trailing" id="gt4-RA-GdB"/>
                             <constraint firstItem="lT4-DA-pLO" firstAttribute="top" secondItem="6cx-mx-gay" secondAttribute="bottom" constant="10" id="kSM-OH-SbJ"/>
                             <constraint firstItem="6cx-mx-gay" firstAttribute="top" secondItem="l58-dX-vJm" secondAttribute="bottom" constant="5" id="ojy-Da-stm"/>
                             <constraint firstItem="6cx-mx-gay" firstAttribute="centerX" secondItem="sTl-9S-FJ5" secondAttribute="centerX" id="zrU-5B-W6R"/>
@@ -101,7 +102,7 @@
                 <outlet property="source" destination="lT4-DA-pLO" id="yeL-iG-l4S"/>
                 <outlet property="title" destination="6cx-mx-gay" id="seS-3z-GyI"/>
             </connections>
-            <point key="canvasLocation" x="-427" y="-649"/>
+            <point key="canvasLocation" x="-427.19999999999999" y="-649.47526236881561"/>
         </collectionViewCell>
     </objects>
     <resources>
