@@ -112,7 +112,6 @@ extension ViewController{
                 if let row = indexPath?.row{
                     showNewsVc.titleFromVc  = newsFromDB[row].title ?? ""
                     showNewsVc.dateFromVc =  TimeConvertion.shared.timeConvert(time: newsFromDB[row].publishedAt ?? " " )
-                   
                     showNewsVc.categoryFromVc = newsFromDB[row].category ?? ""
                     showNewsVc.imageFromVc = newsFromDB[row].urlToImage ?? ""
                     showNewsVc.descriptionFromVc = newsFromDB[row].newsDescription ?? ""
@@ -176,6 +175,8 @@ extension ViewController: UICollectionViewDataSource{
             item.source.text = newsFromDB[indexPath.row].sourceName
             item.catgory.text = newsFromDB[indexPath.row].category
             item.publishDate.text  = TimeConvertion.shared.timeConvert(time: newsFromDB[indexPath.row].publishedAt ?? " ")
+            item.addToBookMark.tag = indexPath.row
+            item.addToBookMark.addTarget(self, action: #selector(addBookmark), for: .touchUpInside)
             return item
             
         } else{
@@ -185,6 +186,32 @@ extension ViewController: UICollectionViewDataSource{
             print(indexPath.row)
             return item
         }
+    }
+    @objc func addBookmark(sender: UIButton){
+        let indexPath = IndexPath(row: sender.tag, section: 0)
+        saveToBookMark(row: indexPath.row)
+        
+    }
+    func saveToBookMark(row: Int){
+        let data = NewsData(author: newsFromDB[row].author ?? "Unknown", category: newsFromDB[row].category ?? "Unknown", content: newsFromDB[row].content ?? "Unknown", newsDescription: newsFromDB[row].newsDescription ?? "Unknown", publishedAt: newsFromDB[row].publishedAt ?? "Unknown", sourceName: newsFromDB[row].sourceName ?? "Unknown", title:newsFromDB[row].title ?? "Unknown", url: newsFromDB[row].url ?? "Unknown", urlToImage:newsFromDB[row].urlToImage ?? "Unknown")
+        if CoreDataDBBookMark.shared.checkDB(article: data){
+            
+            CoreDataDBBookMark.shared.addBookmark(article: data)
+        }else{
+            showAlert()
+            //print("alreadyAdded")
+        }
+    }
+    func showAlert(){
+        print("AlreadyAdded")
+        let alert = UIAlertController(title: "Bookmark Already Added", message: "", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Cancel", style: .destructive){[weak self]_ in
+            guard let self = self else {return}
+            self.dismiss(animated: true)
+        }
+        alert.addAction(cancel)
+        present(alert, animated: true)
+        
     }
 }
 extension ViewController: UICollectionViewDelegateFlowLayout{

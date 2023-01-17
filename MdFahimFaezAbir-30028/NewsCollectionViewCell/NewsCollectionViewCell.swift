@@ -12,6 +12,7 @@ class NewsCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var newsImage: UIImageView!
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var catgory: UILabel!
+    @IBOutlet weak var addToBookMark: UIButton!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

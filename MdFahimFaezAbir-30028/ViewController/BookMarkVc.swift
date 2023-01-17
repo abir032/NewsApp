@@ -12,6 +12,7 @@ class BookMarkVc: UIViewController {
     @IBOutlet weak var searchField: UITextField!
     @IBOutlet weak var categoryCv: UICollectionView!
     @IBOutlet weak var tableView: UITableView!
+    var bookMarkFromDb = [BookMark]()
     override func viewDidLoad() {
         super.viewDidLoad()
         searchField.layer.cornerRadius = 10
@@ -81,6 +82,10 @@ extension BookMarkVc: UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let cell = categoryCv.cellForItem(at: indexPath) as? BookMarkVcCategoryCell{
             cell.uiView.backgroundColor = UIColor(named: "customBlack")
+        }
+        if let bookmarkDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName, indexPath: indexPath){
+            //bookMarkFromDb =  bookmarkDb
+           // newsCollectionView.reloadData()
         }
     }
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
