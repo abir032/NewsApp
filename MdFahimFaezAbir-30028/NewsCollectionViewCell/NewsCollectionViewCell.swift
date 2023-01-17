@@ -18,6 +18,7 @@ class NewsCollectionViewCell: UICollectionViewCell {
         // Initialization code
         newsImage.layer.cornerRadius = 10
     }
+    
 
     @IBOutlet weak var publishDate: UILabel!
     @IBOutlet weak var source: UILabel!

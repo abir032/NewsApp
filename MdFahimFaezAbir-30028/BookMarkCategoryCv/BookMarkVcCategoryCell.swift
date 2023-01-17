@@ -16,5 +16,7 @@ class BookMarkVcCategoryCell: UICollectionViewCell {
         uiView.layer.cornerRadius = uiView.bounds.size.height / 2.0
         // Initialization code
     }
-
+    override func prepareForReuse() {
+        uiView.backgroundColor = .white
+    }
 }

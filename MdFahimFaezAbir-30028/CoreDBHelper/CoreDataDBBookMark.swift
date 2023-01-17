@@ -67,6 +67,15 @@ class CoreDataDBBookMark{
             return nil
         }
     }
+    func deleteBookmark(indexPath: IndexPath, newsList: [BookMark]) {
+        let news = newsList[indexPath.row]
+        context.delete(news)
+        do{
+            try context.save()
+        }catch{
+            print(error)
+        }
+    }
 
 
 }

@@ -387,7 +387,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rDm-AB-HNM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="794.39999999999998" y="-1074.5127436281859"/>
+            <point key="canvasLocation" x="1281" y="-849"/>
         </scene>
         <!--Web View-->
         <scene sceneID="lc0-Ia-y3R">
@@ -428,7 +428,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FY0-U4-4qi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1553" y="-1009"/>
+            <point key="canvasLocation" x="2108" y="-1155"/>
         </scene>
         <!--Book Mark Vc-->
         <scene sceneID="uYo-pv-oIc">
@@ -486,7 +486,7 @@
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="V42-b3-jSj">
                                                     <rect key="frame" x="16" y="11" width="343" height="84"/>
                                                     <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="commentator" translatesAutoresizingMaskIntoConstraints="NO" id="i6U-Zx-a4W">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="commentator" translatesAutoresizingMaskIntoConstraints="NO" id="i6U-Zx-a4W">
                                                             <rect key="frame" x="258" y="5" width="80" height="80"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="80" id="TDv-4v-Iqc"/>
@@ -532,7 +532,7 @@
                                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                     <constraints>
                                                         <constraint firstItem="i6U-Zx-a4W" firstAttribute="leading" secondItem="sKC-Z9-gGm" secondAttribute="trailing" constant="31.5" id="1SZ-36-zZa"/>
-                                                        <constraint firstItem="sKC-Z9-gGm" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="2yU-rK-Wiz" secondAttribute="trailing" symbolic="YES" id="Fcp-4f-llJ"/>
+                                                        <constraint firstItem="sKC-Z9-gGm" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="2yU-rK-Wiz" secondAttribute="trailing" constant="8" symbolic="YES" id="Fcp-4f-llJ"/>
                                                         <constraint firstItem="sKC-Z9-gGm" firstAttribute="top" secondItem="Ade-wg-AK5" secondAttribute="bottom" constant="10" id="Fs3-t9-s17"/>
                                                         <constraint firstAttribute="trailing" secondItem="i6U-Zx-a4W" secondAttribute="trailing" constant="5" id="Kbe-OE-erL"/>
                                                         <constraint firstItem="3H2-rn-nwo" firstAttribute="leading" secondItem="V42-b3-jSj" secondAttribute="leading" constant="5" id="LNv-hO-wUY"/>
@@ -554,6 +554,13 @@
                                                 <constraint firstItem="V42-b3-jSj" firstAttribute="top" secondItem="Czo-ha-vcF" secondAttribute="topMargin" id="kud-mi-3C3"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="category" destination="3H2-rn-nwo" id="msy-8v-1nC"/>
+                                            <outlet property="date" destination="sKC-Z9-gGm" id="XHd-DB-MtC"/>
+                                            <outlet property="newsImage" destination="i6U-Zx-a4W" id="Nn8-Ks-guu"/>
+                                            <outlet property="source" destination="2yU-rK-Wiz" id="a6m-gP-8IQ"/>
+                                            <outlet property="title" destination="Ade-wg-AK5" id="rbt-yw-yGI"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
@@ -601,6 +608,7 @@
                         <outlet property="categoryCv" destination="XdO-rY-QBx" id="fIj-1r-ge4"/>
                         <outlet property="searchField" destination="ugR-vo-pn0" id="H4I-r9-mV5"/>
                         <outlet property="tableView" destination="DEw-gY-cyz" id="enx-iU-gaT"/>
+                        <segue destination="A1G-ET-hPp" kind="show" identifier="showNewsFromBookmark" id="y6Y-iY-VMM"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hyb-4n-fTj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -668,6 +676,9 @@
             <point key="canvasLocation" x="1616.8" y="121.88905547226388"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="y6Y-iY-VMM"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <image name="bookmark.circle" catalog="system" width="128" height="123"/>
         <image name="bookmark.circle.fill" catalog="system" width="128" height="123"/>

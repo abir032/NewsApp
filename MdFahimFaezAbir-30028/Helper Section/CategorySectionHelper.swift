@@ -11,61 +11,19 @@ class CategorySectionHelper{
     static let shared = CategorySectionHelper()
     private init(){}
     
-    func selectCategory(category: String, indexPath: IndexPath)-> [NewsDB]?{
+    func selectCategory(category: String)-> [NewsDB]?{
         var result = [NewsDB]()
-        if indexPath.row == 0{
-            if let news = CoreDataDB.shared.getAllNews(category: category){
-                result = news
-            }
-           return result
+        if let news = CoreDataDB.shared.getAllNews(category: category){
+            result = news
+       }
+       return result
+    }
+    func selectCategoryForBoomark(category: String)-> [BookMark]?{
+        var result = [BookMark]()
+        if let news = CoreDataDBBookMark.shared.getAllUser(category: category){
+            result = news
         }
-        else if indexPath.row == 1{
-            if let news = CoreDataDB.shared.getAllNews(category: category){
-                result = news
-            }
-           return result
-        }
-        else if indexPath.row == 2{
-            if let news = CoreDataDB.shared.getAllNews(category: category){
-                result = news
-            }
-           return result
-        }
-        else if indexPath.row == 3{
-            if let news = CoreDataDB.shared.getAllNews(category: category){
-                result = news
-            }
-           return result
-        }
-        else if indexPath.row == 4{
-            if let news = CoreDataDB.shared.getAllNews(category: category){
-                result = news
-            }
-           return result
-        }
-        else if indexPath.row == 5{
-            if let news = CoreDataDB.shared.getAllNews(category: category){
-                result = news
-            }
-           return result
-        }
-        else if indexPath.row == 6{
-            if let news = CoreDataDB.shared.getAllNews(category: category){
-                result = news
-            }
-           return result
-        }
-        else if indexPath.row == 7{
-            if let news = CoreDataDB.shared.getAllNews(category: category){
-                result = news
-            }
-           return result
-        }else {
-            if let news = CoreDataDB.shared.getAllNews(category: category){
-                result = news
-            }
-           return result
-        }
+        return result
     }
     
 }

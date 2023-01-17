@@ -13,6 +13,7 @@ class BookMarkVc: UIViewController {
     @IBOutlet weak var categoryCv: UICollectionView!
     @IBOutlet weak var tableView: UITableView!
     var bookMarkFromDb = [BookMark]()
+    var indexPath: IndexPath?
     override func viewDidLoad() {
         super.viewDidLoad()
         searchField.layer.cornerRadius = 10
@@ -23,6 +24,7 @@ class BookMarkVc: UIViewController {
         let nib = UINib(nibName: "BookMarkVcCategoryCell", bundle: nil)
         categoryCv.register(nib, forCellWithReuseIdentifier: Constants.bookMarkCategoryCell)
         setSearchBarImage()
+       
     }
     func setSearchBarImage(){
         let searchIcon  = UIImageView()
@@ -43,6 +45,11 @@ class BookMarkVc: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
+        if let bookmark = CategorySectionHelper.shared.selectCategoryForBoomark(category: Category.categoryList[0].categoryName){
+            bookMarkFromDb = bookmark
+        }
+        categoryCv.reloadData()
+        tableView.reloadData()
     }
     override func viewDidDisappear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = false
@@ -58,20 +65,71 @@ extension BookMarkVc: UITextFieldDelegate{
 }
 
 // MARK: - Table View
-extension BookMarkVc: UITableViewDelegate{
+extension BookMarkVc{
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == Constants.showNewsFromBookmark{
+            if let showNewsVc = segue.destination as? ShowNewsVc{
+                if let row = indexPath?.row{
+                    showNewsVc.titleFromVc  = bookMarkFromDb[row].title ?? ""
+                    showNewsVc.dateFromVc =  TimeConvertion.shared.timeConvert(time: bookMarkFromDb[row].publishedAt ?? " " )
+                    showNewsVc.categoryFromVc = bookMarkFromDb[row].category ?? ""
+                    showNewsVc.imageFromVc = bookMarkFromDb[row].urlToImage ?? ""
+                    showNewsVc.descriptionFromVc = bookMarkFromDb[row].newsDescription ?? ""
+                    showNewsVc.sourceNameFromVc = bookMarkFromDb[row].sourceName ?? ""
+                    showNewsVc.contentFromVc = bookMarkFromDb[row].content ?? ""
+                    showNewsVc.authorFromVc = bookMarkFromDb[row].author ?? ""
+                    showNewsVc.fullnewsUrl = bookMarkFromDb[row].url ?? ""
+                }
+            }
+        }
+    }
     
+}
+
+extension BookMarkVc: UITableViewDelegate{
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.indexPath = indexPath
+        performSegue(withIdentifier: Constants.showNewsFromBookmark, sender: nil)
+    }
 }
 extension BookMarkVc: UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        5
+        bookMarkFromDb.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.bookMarkCell, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.bookMarkCell, for: indexPath) as! BookMarkCell
+        cell.title.text = bookMarkFromDb[indexPath.row].title
+        cell.category.text = bookMarkFromDb[indexPath.row].category
+        cell.source.text = bookMarkFromDb[indexPath.row].sourceName
+        cell.date.text = TimeConvertion.shared.timeConvert(time: bookMarkFromDb[indexPath.row].publishedAt ?? " ")
+        if let url = bookMarkFromDb[indexPath.row].urlToImage{
+            cell.newsImage.layer.cornerRadius = 10
+            cell.newsImage.sd_setImage(with: URL(string: url))
+        }
+       
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         100
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: nil){[weak self]_,_,completion in
+            guard let self = self else {return}
+            self.handleDeleteAction(indexPath: indexPath)
+        }
+        deleteAction.image = UIImage(systemName: "trash")
+        let swipAction = UISwipeActionsConfiguration(actions: [deleteAction])
+        swipAction.performsFirstActionWithFullSwipe = true
+        return swipAction
+    }
+    func handleDeleteAction(indexPath: IndexPath){
+        tableView.beginUpdates()
+        CoreDataDBBookMark.shared.deleteBookmark(indexPath: indexPath, newsList: bookMarkFromDb)
+        bookMarkFromDb.remove(at: indexPath.row)
+        tableView.deleteRows(at: [indexPath], with: .middle)
+        tableView.endUpdates()
     }
     
 }
@@ -83,9 +141,9 @@ extension BookMarkVc: UICollectionViewDelegate{
         if let cell = categoryCv.cellForItem(at: indexPath) as? BookMarkVcCategoryCell{
             cell.uiView.backgroundColor = UIColor(named: "customBlack")
         }
-        if let bookmarkDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName, indexPath: indexPath){
-            //bookMarkFromDb =  bookmarkDb
-           // newsCollectionView.reloadData()
+        if let bookmarkDb = CategorySectionHelper.shared.selectCategoryForBoomark(category: Category.categoryList[indexPath.row].categoryName){
+            bookMarkFromDb =  bookmarkDb
+            tableView.reloadData()
         }
     }
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {

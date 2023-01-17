@@ -17,9 +17,10 @@ class ViewController: UIViewController {
     var articles = [Article]()
     var newsFromDB = [NewsDB]()
     var indexPath: IndexPath?
+    var selectedCategoryIndexPath = IndexPath(row: 0, section: 0)
     override func viewDidLoad() {
         super.viewDidLoad()
-       // navigationController?.hidesBarsOnTap = true
+        // navigationController?.hidesBarsOnTap = true
         //navigationController?.isNavigationBarHidden = true
         userImage.layer.cornerRadius = userImage.bounds.size.width / 2.0
         searchField.layer.cornerRadius = 10
@@ -41,7 +42,7 @@ class ViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
-       
+        
     }
     override func viewDidDisappear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = false
@@ -137,7 +138,9 @@ extension ViewController: UICollectionViewDelegate{
         else{
             let cell = collectionView.cellForItem(at: indexPath) as! CollectionViewCell
             cell.uiView.backgroundColor = UIColor(named: "customBlack")
-            if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName, indexPath: indexPath){
+            selectedCategoryIndexPath = indexPath
+            collectionView.reloadData()
+            if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName){
                 newsFromDB = newsDb
                 newsCollectionView.reloadData()
             }
@@ -181,6 +184,9 @@ extension ViewController: UICollectionViewDataSource{
             
         } else{
             let item = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.collectionViewNib, for: indexPath) as! CollectionViewCell
+            if selectedCategoryIndexPath == indexPath{
+                item.uiView.backgroundColor = UIColor(named: "customBlack")
+            }
             item.imageView.image = UIImage(named: Category.categoryList[indexPath.row].image)
             item.categoryName.text = Category.categoryList[indexPath.row].categoryName
             print(indexPath.row)
@@ -195,7 +201,6 @@ extension ViewController: UICollectionViewDataSource{
     func saveToBookMark(row: Int){
         let data = NewsData(author: newsFromDB[row].author ?? "Unknown", category: newsFromDB[row].category ?? "Unknown", content: newsFromDB[row].content ?? "Unknown", newsDescription: newsFromDB[row].newsDescription ?? "Unknown", publishedAt: newsFromDB[row].publishedAt ?? "Unknown", sourceName: newsFromDB[row].sourceName ?? "Unknown", title:newsFromDB[row].title ?? "Unknown", url: newsFromDB[row].url ?? "Unknown", urlToImage:newsFromDB[row].urlToImage ?? "Unknown")
         if CoreDataDBBookMark.shared.checkDB(article: data){
-            
             CoreDataDBBookMark.shared.addBookmark(article: data)
         }else{
             showAlert()

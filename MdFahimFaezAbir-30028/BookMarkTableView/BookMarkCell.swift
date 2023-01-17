@@ -9,8 +9,15 @@ import UIKit
 
 class BookMarkCell: UITableViewCell {
 
+    @IBOutlet weak var newsImage: UIImageView!
+    
+    @IBOutlet weak var date: UILabel!
+    @IBOutlet weak var source: UILabel!
+    @IBOutlet weak var title: UILabel!
+    @IBOutlet weak var category: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
+        newsImage.layer.cornerRadius = 20
         // Initialization code
     }
 
