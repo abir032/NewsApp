@@ -3,6 +3,7 @@
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -191,7 +192,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZtF-dd-2Wk">
-                                        <rect key="frame" x="306.5" y="5.5" width="58.5" height="41.5"/>
+                                        <rect key="frame" x="306.5" y="5.5" width="58.5" height="41"/>
                                         <color key="tintColor" systemColor="labelColor"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" image="bookmark.circle" catalog="system">
@@ -247,10 +248,10 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="newspaper" translatesAutoresizingMaskIntoConstraints="NO" id="idU-ur-Iqt">
-                                <rect key="frame" x="30" y="171" width="315" height="200"/>
+                                <rect key="frame" x="30" y="171" width="315" height="200.5"/>
                             </imageView>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u8l-Bn-Dz2">
-                                <rect key="frame" x="0.0" y="376" width="375" height="291"/>
+                                <rect key="frame" x="0.0" y="376.5" width="375" height="290.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fv9-Ut-lT2">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="147"/>
@@ -437,21 +438,53 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yag-ku-rYY">
-                                <rect key="frame" x="20" y="617" width="335" height="40"/>
-                                <color key="backgroundColor" systemColor="systemBlueColor"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rAi-Ey-F2b">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="53.5"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bgB-u2-L4O">
+                                        <rect key="frame" x="151" y="16" width="73.5" height="21"/>
+                                        <attributedString key="attributedText">
+                                            <fragment content="Bookmark">
+                                                <attributes>
+                                                    <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                    <font key="NSFont" size="17" name="BodoniSvtyTwoITCTT-Bold"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                </attributes>
+                                            </fragment>
+                                        </attributedString>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bookmark.circle.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="PbW-5C-zBG">
+                                        <rect key="frame" x="106" y="7" width="40" height="39"/>
+                                        <color key="backgroundColor" name="customBlack"/>
+                                        <color key="tintColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="HMe-hr-nH4"/>
+                                            <constraint firstAttribute="width" constant="40" id="T27-VK-qUw"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="PbW-5C-zBG" firstAttribute="centerY" secondItem="rAi-Ey-F2b" secondAttribute="centerY" id="7tz-vM-7qx"/>
+                                    <constraint firstItem="bgB-u2-L4O" firstAttribute="centerX" secondItem="rAi-Ey-F2b" secondAttribute="centerX" id="BFP-3Y-d65"/>
+                                    <constraint firstItem="bgB-u2-L4O" firstAttribute="leading" secondItem="PbW-5C-zBG" secondAttribute="trailing" constant="5" id="GNg-4T-hJ7"/>
+                                    <constraint firstItem="bgB-u2-L4O" firstAttribute="centerY" secondItem="rAi-Ey-F2b" secondAttribute="centerY" id="lVf-K5-xNv"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Uqk-dC-O7u"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="Yag-ku-rYY" firstAttribute="height" secondItem="Rfi-3T-e2A" secondAttribute="height" multiplier="0.06" id="5E6-Wy-Vgp"/>
-                            <constraint firstItem="Yag-ku-rYY" firstAttribute="centerX" secondItem="Rfi-3T-e2A" secondAttribute="centerX" id="8yv-bG-QHe"/>
-                            <constraint firstItem="Yag-ku-rYY" firstAttribute="leading" secondItem="Uqk-dC-O7u" secondAttribute="leading" constant="20" id="izW-iv-YRS"/>
-                            <constraint firstAttribute="bottom" secondItem="Yag-ku-rYY" secondAttribute="bottom" constant="10" id="uKh-4W-hXE"/>
+                            <constraint firstItem="rAi-Ey-F2b" firstAttribute="centerX" secondItem="Rfi-3T-e2A" secondAttribute="centerX" id="6uz-nN-aTm"/>
+                            <constraint firstItem="rAi-Ey-F2b" firstAttribute="height" secondItem="Rfi-3T-e2A" secondAttribute="height" multiplier="0.08" id="XE9-M5-8OT"/>
+                            <constraint firstItem="rAi-Ey-F2b" firstAttribute="leading" secondItem="Uqk-dC-O7u" secondAttribute="leading" id="aeA-yn-UKV"/>
+                            <constraint firstItem="rAi-Ey-F2b" firstAttribute="top" secondItem="Uqk-dC-O7u" secondAttribute="top" id="ihx-YW-08I"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="" image="bookmark.fill" catalog="system" id="Jax-lU-eYX"/>
+                    <tabBarItem key="tabBarItem" title="" image="bookmark.fill" catalog="system" id="Jax-lU-eYX">
+                        <color key="badgeColor" name="customBlack"/>
+                    </tabBarItem>
                     <navigationItem key="navigationItem" id="aBH-Sk-OBu"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hyb-4n-fTj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -500,19 +533,20 @@
     </scenes>
     <resources>
         <image name="bookmark.circle" catalog="system" width="128" height="123"/>
+        <image name="bookmark.circle.fill" catalog="system" width="128" height="123"/>
         <image name="bookmark.fill" catalog="system" width="110" height="128"/>
         <image name="eye" catalog="system" width="128" height="79"/>
         <image name="homekit" catalog="system" width="128" height="104"/>
         <image name="newspaper" width="512" height="512"/>
         <image name="pngegg" width="645" height="800"/>
+        <namedColor name="customBlack">
+            <color red="0.11299999803304672" green="0.11400000005960464" blue="0.11900000274181366" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="labelColor">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray3Color">
             <color red="0.7803921568627451" green="0.7803921568627451" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
