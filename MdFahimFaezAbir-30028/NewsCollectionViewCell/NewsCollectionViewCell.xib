@@ -24,7 +24,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="258" height="160"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6cx-mx-gay">
-                                <rect key="frame" x="0.0" y="165" width="258" height="16"/>
+                                <rect key="frame" x="0.0" y="165" width="258" height="15.666666666666657"/>
                                 <attributedString key="attributedText">
                                     <fragment content="dsamffvbcxznvbdszvbxzcvdjfgdfsgdfsgsdf">
                                         <attributes>
@@ -36,19 +36,19 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CNNN News" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lT4-DA-pLO">
-                                <rect key="frame" x="0.0" y="191" width="48.5" height="10"/>
+                                <rect key="frame" x="0.0" y="190.66666666666666" width="48.666666666666664" height="9.6666666666666572"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="8"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="27.10.2023" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M1l-w2-Z2i">
-                                <rect key="frame" x="214.5" y="191" width="43.5" height="10"/>
+                                <rect key="frame" x="214.66666666666666" y="190.66666666666666" width="43.333333333333343" height="9.6666666666666572"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="8"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hab-9g-mpS">
-                                <rect key="frame" x="211.5" y="0.0" width="46.5" height="34"/>
+                                <rect key="frame" x="211.66666666666666" y="0.0" width="46.333333333333343" height="34"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" image="bookmark.fill" catalog="system"/>
                             </button>
@@ -79,6 +79,7 @@
                             <constraint firstItem="jtz-uK-hEt" firstAttribute="leading" secondItem="l58-dX-vJm" secondAttribute="leading" constant="5" id="Wag-oH-Y7M"/>
                             <constraint firstItem="l58-dX-vJm" firstAttribute="top" secondItem="sTl-9S-FJ5" secondAttribute="top" id="cct-EN-SOA"/>
                             <constraint firstItem="l58-dX-vJm" firstAttribute="leading" secondItem="sTl-9S-FJ5" secondAttribute="leading" id="e2d-kF-HUV"/>
+                            <constraint firstAttribute="trailing" secondItem="M1l-w2-Z2i" secondAttribute="trailing" id="gt4-RA-GdB"/>
                             <constraint firstItem="lT4-DA-pLO" firstAttribute="top" secondItem="6cx-mx-gay" secondAttribute="bottom" constant="10" id="kSM-OH-SbJ"/>
                             <constraint firstItem="6cx-mx-gay" firstAttribute="top" secondItem="l58-dX-vJm" secondAttribute="bottom" constant="5" id="ojy-Da-stm"/>
                             <constraint firstItem="6cx-mx-gay" firstAttribute="centerX" secondItem="sTl-9S-FJ5" secondAttribute="centerX" id="zrU-5B-W6R"/>
@@ -95,13 +96,14 @@
             </constraints>
             <size key="customSize" width="258" height="256"/>
             <connections>
+                <outlet property="addToBookMark" destination="Hab-9g-mpS" id="GZg-6V-N81"/>
                 <outlet property="catgory" destination="jtz-uK-hEt" id="2uT-7p-e0J"/>
                 <outlet property="newsImage" destination="l58-dX-vJm" id="aqL-Ra-HXa"/>
                 <outlet property="publishDate" destination="M1l-w2-Z2i" id="rCU-s1-kWl"/>
                 <outlet property="source" destination="lT4-DA-pLO" id="yeL-iG-l4S"/>
                 <outlet property="title" destination="6cx-mx-gay" id="seS-3z-GyI"/>
             </connections>
-            <point key="canvasLocation" x="-427" y="-649"/>
+            <point key="canvasLocation" x="-427.19999999999999" y="-649.47526236881561"/>
         </collectionViewCell>
     </objects>
     <resources>

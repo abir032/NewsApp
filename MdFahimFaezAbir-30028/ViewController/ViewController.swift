@@ -17,9 +17,10 @@ class ViewController: UIViewController {
     var articles = [Article]()
     var newsFromDB = [NewsDB]()
     var indexPath: IndexPath?
+    var selectedCategoryIndexPath = IndexPath(row: 0, section: 0)
     override func viewDidLoad() {
         super.viewDidLoad()
-       // navigationController?.hidesBarsOnTap = true
+        // navigationController?.hidesBarsOnTap = true
         //navigationController?.isNavigationBarHidden = true
         userImage.layer.cornerRadius = userImage.bounds.size.width / 2.0
         searchField.layer.cornerRadius = 10
@@ -39,7 +40,13 @@ class ViewController: UIViewController {
         setSearchBarImage()
         
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.isNavigationBarHidden = true
+        
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        navigationController?.isNavigationBarHidden = false
+    }
     // MARK: - URL gula vhul ache
     func setSearchBarImage(){
         let searchIcon  = UIImageView()
@@ -105,7 +112,7 @@ extension ViewController{
             if let showNewsVc = segue.destination as? ShowNewsVc{
                 if let row = indexPath?.row{
                     showNewsVc.titleFromVc  = newsFromDB[row].title ?? ""
-                    showNewsVc.dateFromVc =  newsFromDB[row].publishedAt ?? ""
+                    showNewsVc.dateFromVc =  TimeConvertion.shared.timeConvert(time: newsFromDB[row].publishedAt ?? " " )
                     showNewsVc.categoryFromVc = newsFromDB[row].category ?? ""
                     showNewsVc.imageFromVc = newsFromDB[row].urlToImage ?? ""
                     showNewsVc.descriptionFromVc = newsFromDB[row].newsDescription ?? ""
@@ -131,7 +138,9 @@ extension ViewController: UICollectionViewDelegate{
         else{
             let cell = collectionView.cellForItem(at: indexPath) as! CollectionViewCell
             cell.uiView.backgroundColor = UIColor(named: "customBlack")
-            if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName, indexPath: indexPath){
+            selectedCategoryIndexPath = indexPath
+            collectionView.reloadData()
+            if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName){
                 newsFromDB = newsDb
                 newsCollectionView.reloadData()
             }
@@ -168,21 +177,51 @@ extension ViewController: UICollectionViewDataSource{
             }
             item.source.text = newsFromDB[indexPath.row].sourceName
             item.catgory.text = newsFromDB[indexPath.row].category
-            item.publishDate.text  = newsFromDB[indexPath.row].publishedAt
+            item.publishDate.text  = TimeConvertion.shared.timeConvert(time: newsFromDB[indexPath.row].publishedAt ?? " ")
+            item.addToBookMark.tag = indexPath.row
+            item.addToBookMark.addTarget(self, action: #selector(addBookmark), for: .touchUpInside)
             return item
             
         } else{
             let item = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.collectionViewNib, for: indexPath) as! CollectionViewCell
+            if selectedCategoryIndexPath == indexPath{
+                item.uiView.backgroundColor = UIColor(named: "customBlack")
+            }
             item.imageView.image = UIImage(named: Category.categoryList[indexPath.row].image)
             item.categoryName.text = Category.categoryList[indexPath.row].categoryName
             print(indexPath.row)
             return item
         }
     }
+    @objc func addBookmark(sender: UIButton){
+        let indexPath = IndexPath(row: sender.tag, section: 0)
+        saveToBookMark(row: indexPath.row)
+        
+    }
+    func saveToBookMark(row: Int){
+        let data = NewsData(author: newsFromDB[row].author ?? "Unknown", category: newsFromDB[row].category ?? "Unknown", content: newsFromDB[row].content ?? "Unknown", newsDescription: newsFromDB[row].newsDescription ?? "Unknown", publishedAt: newsFromDB[row].publishedAt ?? "Unknown", sourceName: newsFromDB[row].sourceName ?? "Unknown", title:newsFromDB[row].title ?? "Unknown", url: newsFromDB[row].url ?? "Unknown", urlToImage:newsFromDB[row].urlToImage ?? "Unknown")
+        if CoreDataDBBookMark.shared.checkDB(article: data){
+            CoreDataDBBookMark.shared.addBookmark(article: data)
+        }else{
+            showAlert()
+            //print("alreadyAdded")
+        }
+    }
+    func showAlert(){
+        print("AlreadyAdded")
+        let alert = UIAlertController(title: "Bookmark Already Added", message: "", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Cancel", style: .destructive){[weak self]_ in
+            guard let self = self else {return}
+            self.dismiss(animated: true)
+        }
+        alert.addAction(cancel)
+        present(alert, animated: true)
+        
+    }
 }
 extension ViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        CGSize(width: 80, height: 70)
+        CGSize(width: 70, height: 80)
     }
     func gridView(){
         let insets = NSDirectionalEdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3)

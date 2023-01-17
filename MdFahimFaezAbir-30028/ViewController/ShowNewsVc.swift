@@ -41,7 +41,6 @@ class ShowNewsVc: UIViewController {
 //        print(descriptionFromVc)
         // Do any additional setup after loading the view.
     }
-    
     @IBAction func addToBookmark(_ sender: Any) {
         print("Added")
     }
