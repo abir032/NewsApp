@@ -15,10 +15,10 @@ extension Category{
     static let categoryList = [Category(categoryName: "All", image: "newspaper"),
                                Category(categoryName: "Business", image: "accounting"),
                                Category(categoryName: "General", image: "world-news (1)"),
-                               Category(categoryName: "Entertainment", image: "Daco_4873904"),
-                               Category(categoryName: "Health", image: "Health"),
-                               Category(categoryName: "Science", image: "Science"),
-                               Category(categoryName: "Sports", image: "sports"),
-                               Category(categoryName: "Technology", image: "technology"),
+                               Category(categoryName: "Entertainment", image: "theater"),
+                               Category(categoryName: "Health", image: "journalist"),
+                               Category(categoryName: "Science", image: "atom"),
+                               Category(categoryName: "Sports", image: "commentator"),
+                               Category(categoryName: "Technology", image: "project-management"),
     ]
 }
