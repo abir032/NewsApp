@@ -22,6 +22,7 @@
 		89493BF52971628D009CBA64 /* BookMark+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89493BF32971628D009CBA64 /* BookMark+CoreDataProperties.swift */; };
 		89493BF8297162B2009CBA64 /* NewsDB+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89493BF6297162B2009CBA64 /* NewsDB+CoreDataClass.swift */; };
 		89493BF9297162B2009CBA64 /* NewsDB+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89493BF7297162B2009CBA64 /* NewsDB+CoreDataProperties.swift */; };
+		8975A0A42977FA0600CA0A5F /* ConstantNewsApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8975A0A32977FA0600CA0A5F /* ConstantNewsApi.swift */; };
 		898DD60E297012AE00F6AD07 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 898DD60D297012AE00F6AD07 /* Constants.swift */; };
 		89A835B529763DF9005FBB49 /* BookMarkVc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89A835B429763DF9005FBB49 /* BookMarkVc.swift */; };
 		89A835B829763F35005FBB49 /* BookMarkCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89A835B729763F35005FBB49 /* BookMarkCell.swift */; };
@@ -57,6 +58,7 @@
 		89493BF32971628D009CBA64 /* BookMark+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookMark+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		89493BF6297162B2009CBA64 /* NewsDB+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewsDB+CoreDataClass.swift"; sourceTree = "<group>"; };
 		89493BF7297162B2009CBA64 /* NewsDB+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewsDB+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		8975A0A32977FA0600CA0A5F /* ConstantNewsApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstantNewsApi.swift; sourceTree = "<group>"; };
 		898DD60D297012AE00F6AD07 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		89A835B429763DF9005FBB49 /* BookMarkVc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BookMarkVc.swift; path = "MdFahimFaezAbir-30028/ViewController/BookMarkVc.swift"; sourceTree = SOURCE_ROOT; };
 		89A835B729763F35005FBB49 /* BookMarkCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookMarkCell.swift; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 				893A7DEC29753B1500F55D9F /* CategorySectionHelper.swift */,
 				898DD60D297012AE00F6AD07 /* Constants.swift */,
 				89A835B929764BB4005FBB49 /* TimeConvertion.swift */,
+				8975A0A32977FA0600CA0A5F /* ConstantNewsApi.swift */,
 			);
 			path = "Helper Section";
 			sourceTree = "<group>";
@@ -375,6 +378,7 @@
 				89493BF42971628D009CBA64 /* BookMark+CoreDataClass.swift in Sources */,
 				8945AC542972515100DA8D4D /* NewsData.swift in Sources */,
 				8945AC5729727FEE00DA8D4D /* NewsCollectionViewCell.swift in Sources */,
+				8975A0A42977FA0600CA0A5F /* ConstantNewsApi.swift in Sources */,
 				89A835B529763DF9005FBB49 /* BookMarkVc.swift in Sources */,
 				89493BF8297162B2009CBA64 /* NewsDB+CoreDataClass.swift in Sources */,
 				893A7DEB297539C300F55D9F /* ShowNewsVc.swift in Sources */,

@@ -50,7 +50,7 @@ class CoreDataDB{
     func searchNews(category: String, searchText: String)-> [NewsDB]? {
         var news = [NewsDB]()
         let fetchRequest = NSFetchRequest<NewsDB>(entityName: "NewsDB")
-        let predicate = NSPredicate(format: "category == %@ AND title CONTAINS %@ OR sourceName CONTAINS %@ OR author CONTAINS %@", category,searchText,searchText,searchText)
+        let predicate = NSPredicate(format: "category == %@ AND (title CONTAINS %@ OR sourceName CONTAINS %@ OR author CONTAINS %@)",category,searchText,searchText,searchText)
         if searchText != " "{
             fetchRequest.predicate = predicate
         }
@@ -63,22 +63,23 @@ class CoreDataDB{
             return nil
         }
     }
+    func deleteCached(category: String) {
+        let fetchRequest = NSFetchRequest<NewsDB>(entityName: "NewsDB")
+        let predicate = NSPredicate(format: "category == %@", category)
+        fetchRequest.predicate = predicate
+        do{
+        let newsDB = try context.fetch(fetchRequest)
+            for news in newsDB{
+                context.delete(news)
+            }
+        }catch{
+            print(error)
 
-//    func deletePost(indexPath: IndexPath, postList: [Userpost]) {
-//        let post = postList[indexPath.row]
-//        context.delete(post)
-//        do{
-//            try context.save()
-//        }catch{
-//            print(error)
-//        }
-//    }
-//    func updatePost(indexPath: Int, postList: [Userpost]){
-//        let post = postList[indexPath]
-//        do{
-//            try context.save()
-//        }catch{
-//            print(error)
-//        }
-//    }
+        }
+        do{
+            try context.save()
+        }catch{
+            print(error)
+        }
+    }
 }

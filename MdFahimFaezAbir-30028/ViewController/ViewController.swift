@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var tabbar: UITabBarItem!
     @IBOutlet weak var newsCollectionView: UICollectionView!
+    let refreshControl = UIRefreshControl()
     var articles = [Article]()
     var newsFromDB = [NewsDB]()
     var indexPath: IndexPath?
@@ -31,14 +32,23 @@ class ViewController: UIViewController {
         newsCollectionView.delegate = self
         newsCollectionView.dataSource = self
         gridView()
+        refreshControl.addTarget(self, action: #selector(refreshNewsData), for: UIControl.Event.valueChanged)
+        newsCollectionView.addSubview(refreshControl)
         //MARK: - Nib Registration
         let nib  = UINib(nibName: "CollectionViewCell", bundle: nil)
         collectionView.register(nib, forCellWithReuseIdentifier: Constants.collectionViewNib)
         let nib2 = UINib(nibName: "NewsCollectionViewCell", bundle: nil)
         newsCollectionView.register(nib2, forCellWithReuseIdentifier: Constants.newsCell)
-        //apiCaller(url: Constants.allNewsApli, category: "All")
+       
         setSearchBarImage()
         checkInitialState()
+    }
+    @objc func refreshNewsData(){
+        CoreDataDB.shared.deleteCached(category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
+        newsFromDB.removeAll()
+        apiCaller(url: ConstantNewsApi.Url[selectedCategoryIndexPath.row].newsUrl, category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
+        newsCollectionView.reloadData()
+        refreshControl.endRefreshing()
     }
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
@@ -52,15 +62,9 @@ class ViewController: UIViewController {
         if !defaults.bool(forKey: "hasLaunchedBefore") {
             defaults.set(true, forKey: "hasLaunchedBefore")
             print("first user")
-            apiCaller(url: Constants.allNewsApli, category: Category.categoryList[0].categoryName)
-            apiCaller(url: Constants.bussinesApi, category: Category.categoryList[1].categoryName)
-            apiCaller(url: Constants.general, category: Category.categoryList[2].categoryName)
-            apiCaller(url: Constants.entertainment, category: Category.categoryList[3].categoryName)
-            apiCaller(url: Constants.health, category: Category.categoryList[4].categoryName)
-            apiCaller(url: Constants.science, category: Category.categoryList[5].categoryName)
-            apiCaller(url: Constants.sports, category: Category.categoryList[6].categoryName)
-            apiCaller(url: Constants.technology, category: Category.categoryList[7].categoryName)
-            
+            for i in 0..<ConstantNewsApi.Url.count{
+                apiCaller(url: ConstantNewsApi.Url[i].newsUrl , category: Category.categoryList[i].categoryName)
+            }
         } else {
             if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[0].categoryName){
                 self.newsFromDB = newsDb
@@ -110,9 +114,10 @@ extension ViewController{
                 if let article = news?.articles{
                     self.articles = article
                 }
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else {return}
                   self.saveToDb(category: category)
-                    if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[0].categoryName){
+                    if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[self.selectedCategoryIndexPath.row].categoryName){
                         self.newsFromDB = newsDb
                     }
                   self.newsCollectionView.reloadData()
@@ -180,7 +185,7 @@ extension ViewController: UICollectionViewDelegate{
             selectedCategoryIndexPath = indexPath
             collectionView.reloadData()
             Task{
-                if let newsDb = await CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName){
+                if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName){
                     newsFromDB = newsDb
                     newsCollectionView.reloadData()
                 }
