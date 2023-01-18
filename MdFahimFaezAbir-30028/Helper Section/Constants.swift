@@ -20,6 +20,7 @@ class Constants{
     static let bussinesApi = "https://newsapi.org/v2/top-headlines?country=us&category=business&pageSize=10&apiKey=bff15758b4e346e5b36600845a9d4b43"
     static let general = "https://newsapi.org/v2/top-headlines?country=us&category=general&pageSize=10&apiKey=bff15758b4e346e5b36600845a9d4b43"
     static let health = "https://newsapi.org/v2/top-headlines?country=us&category=health&pageSize=10&apiKey=bff15758b4e346e5b36600845a9d4b43"
+    static let entertainment = "https://newsapi.org/v2/top-headlines?country=us&category=entertainment&pageSize=10&apiKey=bff15758b4e346e5b36600845a9d4b43"
     static let science = "https://newsapi.org/v2/top-headlines?country=us&category=science&pageSize=10&apiKey=bff15758b4e346e5b36600845a9d4b43"
     static let sports = "https://newsapi.org/v2/top-headlines?country=us&category=sports&pageSize=10&apiKey=bff15758b4e346e5b36600845a9d4b43"
     static let technology = "https://newsapi.org/v2/top-headlines?country=us&category=technology&pageSize=10&apiKey=bff15758b4e346e5b36600845a9d4b43"

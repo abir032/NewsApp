@@ -38,7 +38,7 @@ class ViewController: UIViewController {
         newsCollectionView.register(nib2, forCellWithReuseIdentifier: Constants.newsCell)
         //apiCaller(url: Constants.allNewsApli, category: "All")
         setSearchBarImage()
-        
+        checkInitialState()
     }
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
@@ -46,6 +46,27 @@ class ViewController: UIViewController {
     }
     override func viewDidDisappear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = false
+    }
+    func checkInitialState(){
+        let defaults = UserDefaults.standard
+        if !defaults.bool(forKey: "hasLaunchedBefore") {
+            defaults.set(true, forKey: "hasLaunchedBefore")
+            print("first user")
+            apiCaller(url: Constants.allNewsApli, category: Category.categoryList[0].categoryName)
+            apiCaller(url: Constants.bussinesApi, category: Category.categoryList[1].categoryName)
+            apiCaller(url: Constants.general, category: Category.categoryList[2].categoryName)
+            apiCaller(url: Constants.entertainment, category: Category.categoryList[3].categoryName)
+            apiCaller(url: Constants.health, category: Category.categoryList[4].categoryName)
+            apiCaller(url: Constants.science, category: Category.categoryList[5].categoryName)
+            apiCaller(url: Constants.sports, category: Category.categoryList[6].categoryName)
+            apiCaller(url: Constants.technology, category: Category.categoryList[7].categoryName)
+            
+        } else {
+            if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[0].categoryName){
+                self.newsFromDB = newsDb
+                self.newsCollectionView.reloadData()
+            }
+        }
     }
     // MARK: - URL gula vhul ache
     func setSearchBarImage(){
@@ -63,7 +84,22 @@ class ViewController: UIViewController {
         //searchField.
     }
     @objc func searchNews(){
-        // print(searchField.text!)
+        if let searchText = searchField.text{
+            if searchField.text != ""{
+                if let news = CoreDataDB.shared.searchNews(category: Category.categoryList[selectedCategoryIndexPath.row].categoryName, searchText: searchText){
+                    newsFromDB = news
+                    print(newsFromDB.count)
+                    newsCollectionView.reloadData()
+                }
+            }else{
+                if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[selectedCategoryIndexPath.row].categoryName){
+                    self.newsFromDB = newsDb
+                    self.newsCollectionView.reloadData()
+                }
+            }
+            
+           
+        }
     }
 }
 extension ViewController{
@@ -75,8 +111,12 @@ extension ViewController{
                     self.articles = article
                 }
                 DispatchQueue.main.async {
-                    self.saveToDb(category: category)
-                    // self.tableView.reloadData()
+                  self.saveToDb(category: category)
+                    if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[0].categoryName){
+                        self.newsFromDB = newsDb
+                    }
+                  self.newsCollectionView.reloadData()
+                    
                 }
             case .failure(let error):
                 print(error)
@@ -101,8 +141,7 @@ extension ViewController: UITextFieldDelegate{
         return true
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
-        ///print("adsfhhd")
-        print(searchField.text!)
+        
     }
 }
 // MARK: - Segue Section
@@ -140,9 +179,11 @@ extension ViewController: UICollectionViewDelegate{
             cell.uiView.backgroundColor = UIColor(named: "customBlack")
             selectedCategoryIndexPath = indexPath
             collectionView.reloadData()
-            if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName){
-                newsFromDB = newsDb
-                newsCollectionView.reloadData()
+            Task{
+                if let newsDb = await CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName){
+                    newsFromDB = newsDb
+                    newsCollectionView.reloadData()
+                }
             }
         }
         

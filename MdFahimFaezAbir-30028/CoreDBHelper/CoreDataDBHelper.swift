@@ -47,6 +47,22 @@ class CoreDataDB{
             return nil
         }
     }
+    func searchNews(category: String, searchText: String)-> [NewsDB]? {
+        var news = [NewsDB]()
+        let fetchRequest = NSFetchRequest<NewsDB>(entityName: "NewsDB")
+        let predicate = NSPredicate(format: "category == %@ AND title CONTAINS %@ OR sourceName CONTAINS %@ OR author CONTAINS %@", category,searchText,searchText,searchText)
+        if searchText != " "{
+            fetchRequest.predicate = predicate
+        }
+        do{
+            news = try context.fetch(fetchRequest)
+           // print(news[0].sourceName)
+            return news
+        }catch{
+            print(error)
+            return nil
+        }
+    }
 
 //    func deletePost(indexPath: IndexPath, postList: [Userpost]) {
 //        let post = postList[indexPath.row]

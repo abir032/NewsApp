@@ -26,6 +26,7 @@ class ShowNewsVc: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         //navigationController?.isNavigationBarHidden = true
+        image.layer.cornerRadius = 10
         category.text = categoryFromVc
         newsTitle.text = titleFromVc
         author.text = authorFromVc

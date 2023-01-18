@@ -76,6 +76,21 @@ class CoreDataDBBookMark{
             print(error)
         }
     }
-
+    func searchNews(category: String, searchText: String)-> [BookMark]? {
+        var news = [BookMark]()
+        let fetchRequest = NSFetchRequest<BookMark>(entityName: "BookMark")
+        let predicate = NSPredicate(format: "category == %@ AND title CONTAINS %@ OR sourceName CONTAINS %@ OR author CONTAINS %@", category,searchText,searchText,searchText)
+        if searchText != " "{
+            fetchRequest.predicate = predicate
+        }
+        do{
+            news = try context.fetch(fetchRequest)
+           // print(news[0].sourceName)
+            return news
+        }catch{
+            print(error)
+            return nil
+        }
+    }
 
 }

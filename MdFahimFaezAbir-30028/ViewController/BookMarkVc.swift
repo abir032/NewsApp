@@ -8,12 +8,13 @@
 import UIKit
 
 class BookMarkVc: UIViewController {
-
+    
     @IBOutlet weak var searchField: UITextField!
     @IBOutlet weak var categoryCv: UICollectionView!
     @IBOutlet weak var tableView: UITableView!
     var bookMarkFromDb = [BookMark]()
     var indexPath: IndexPath?
+    var selectIndexPath = IndexPath(row: 0, section: 0)
     override func viewDidLoad() {
         super.viewDidLoad()
         searchField.layer.cornerRadius = 10
@@ -24,7 +25,7 @@ class BookMarkVc: UIViewController {
         let nib = UINib(nibName: "BookMarkVcCategoryCell", bundle: nil)
         categoryCv.register(nib, forCellWithReuseIdentifier: Constants.bookMarkCategoryCell)
         setSearchBarImage()
-       
+        
     }
     func setSearchBarImage(){
         let searchIcon  = UIImageView()
@@ -41,15 +42,29 @@ class BookMarkVc: UIViewController {
         //searchField.
     }
     @objc func searchNews(){
+        if let searchText = searchField.text{
+            if searchText != ""{
+                if let news = CoreDataDBBookMark.shared.searchNews(category: Category.categoryList[selectIndexPath.row].categoryName, searchText: searchText){
+                    bookMarkFromDb = news
+                    tableView.reloadData()
+                }
+            }else{
+                if let bookmark = CategorySectionHelper.shared.selectCategoryForBoomark(category: Category.categoryList[selectIndexPath.row].categoryName){
+                    bookMarkFromDb = bookmark
+                    tableView.reloadData()
+                }
+            }
+        }
         // print(searchField.text!)
     }
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
         if let bookmark = CategorySectionHelper.shared.selectCategoryForBoomark(category: Category.categoryList[0].categoryName){
             bookMarkFromDb = bookmark
+            tableView.reloadData()
         }
         categoryCv.reloadData()
-        tableView.reloadData()
+       
     }
     override func viewDidDisappear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = false
@@ -103,11 +118,12 @@ extension BookMarkVc: UITableViewDataSource{
         cell.category.text = bookMarkFromDb[indexPath.row].category
         cell.source.text = bookMarkFromDb[indexPath.row].sourceName
         cell.date.text = TimeConvertion.shared.timeConvert(time: bookMarkFromDb[indexPath.row].publishedAt ?? " ")
+        
         if let url = bookMarkFromDb[indexPath.row].urlToImage{
             cell.newsImage.layer.cornerRadius = 10
             cell.newsImage.sd_setImage(with: URL(string: url))
         }
-       
+        
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -140,6 +156,8 @@ extension BookMarkVc: UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let cell = categoryCv.cellForItem(at: indexPath) as? BookMarkVcCategoryCell{
             cell.uiView.backgroundColor = UIColor(named: "customBlack")
+            selectIndexPath = indexPath
+            collectionView.reloadData()
         }
         if let bookmarkDb = CategorySectionHelper.shared.selectCategoryForBoomark(category: Category.categoryList[indexPath.row].categoryName){
             bookMarkFromDb =  bookmarkDb
@@ -159,8 +177,11 @@ extension BookMarkVc: UICollectionViewDataSource{
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let item = categoryCv.dequeueReusableCell(withReuseIdentifier: Constants.bookMarkCategoryCell, for: indexPath) as! BookMarkVcCategoryCell
-            item.image.image = UIImage(named: Category.categoryList[indexPath.row].image)
-            item.categoryName.text = Category.categoryList[indexPath.row].categoryName
+        if selectIndexPath == indexPath{
+            item.uiView.backgroundColor = UIColor(named: "customBlack")
+        }
+        item.image.image = UIImage(named: Category.categoryList[indexPath.row].image)
+        item.categoryName.text = Category.categoryList[indexPath.row].categoryName
         return item
         
     }
