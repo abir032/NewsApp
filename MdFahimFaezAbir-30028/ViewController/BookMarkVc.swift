@@ -59,12 +59,12 @@ class BookMarkVc: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
-        if let bookmark = CategorySectionHelper.shared.selectCategoryForBoomark(category: Category.categoryList[0].categoryName){
+        categoryCv.reloadData()
+        if let bookmark = CategorySectionHelper.shared.selectCategoryForBoomark(category: Category.categoryList[selectIndexPath.row].categoryName){
             bookMarkFromDb = bookmark
             tableView.reloadData()
         }
-        categoryCv.reloadData()
-       
+        
     }
     override func viewDidDisappear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = false

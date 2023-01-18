@@ -25,9 +25,9 @@ class ShowNewsVc: UIViewController {
     var fullnewsUrl = ""
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.title = categoryFromVc
         //navigationController?.isNavigationBarHidden = true
         image.layer.cornerRadius = 10
-        category.text = categoryFromVc
         newsTitle.text = titleFromVc
         author.text = authorFromVc
        
@@ -45,18 +45,16 @@ class ShowNewsVc: UIViewController {
     @IBAction func addToBookmark(_ sender: Any) {
         print("Added")
     }
-    
-    @IBAction func dismissVC(_ sender: Any) {
-        dismiss(animated: true)
-    }
-    
-
     @IBAction func showFullNewsAction(_ sender: Any) {
         performSegue(withIdentifier: Constants.showWebView, sender: nil)
 //        if let url = URL(string: fullnewsUrl){
 //            UIApplication.shared.open(url)
 //        }
 
+    }
+    
+    @IBAction func addToBookMark(_ sender: Any) {
+        
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == Constants.showWebView{

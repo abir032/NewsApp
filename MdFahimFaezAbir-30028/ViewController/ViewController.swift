@@ -8,7 +8,8 @@
 import UIKit
 
 class ViewController: UIViewController {
-    
+   
+    @IBOutlet weak var gridList: UIButton!
     @IBOutlet weak var searchField: UITextField!
     @IBOutlet weak var userImage: UIImageView!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -19,6 +20,7 @@ class ViewController: UIViewController {
     var newsFromDB = [NewsDB]()
     var indexPath: IndexPath?
     var selectedCategoryIndexPath = IndexPath(row: 0, section: 0)
+    var flag = true
     override func viewDidLoad() {
         super.viewDidLoad()
         // navigationController?.hidesBarsOnTap = true
@@ -31,7 +33,8 @@ class ViewController: UIViewController {
         collectionView.showsHorizontalScrollIndicator = false
         newsCollectionView.delegate = self
         newsCollectionView.dataSource = self
-        gridView()
+        newsCollectionView.collectionViewLayout = gridView()
+        gridList.setImage(UIImage(systemName:"rectangle.grid.1x2.fill"), for: .normal)
         refreshControl.addTarget(self, action: #selector(refreshNewsData), for: UIControl.Event.valueChanged)
         newsCollectionView.addSubview(refreshControl)
         //MARK: - Nib Registration
@@ -43,10 +46,24 @@ class ViewController: UIViewController {
         setSearchBarImage()
         checkInitialState()
     }
+    @IBAction func changeLayout(_ sender: Any) {
+        if flag{
+            flag = false
+            gridViewListView(viewStyle: true)
+            gridList.setImage(UIImage(systemName:"rectangle.grid.1x2.fill"), for: .normal)
+            
+        }else{
+            flag = true
+            gridViewListView(viewStyle: false)
+            gridList.setImage(UIImage(systemName:"square.grid.2x2.fill"), for: .normal)
+        }
+    }
+    
     @objc func refreshNewsData(){
         CoreDataDB.shared.deleteCached(category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
         newsFromDB.removeAll()
-        apiCaller(url: ConstantNewsApi.Url[selectedCategoryIndexPath.row].newsUrl, category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
+        print(ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row))
+        apiCaller(url: ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row), category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
         newsCollectionView.reloadData()
         refreshControl.endRefreshing()
     }
@@ -62,8 +79,9 @@ class ViewController: UIViewController {
         if !defaults.bool(forKey: "hasLaunchedBefore") {
             defaults.set(true, forKey: "hasLaunchedBefore")
             print("first user")
-            for i in 0..<ConstantNewsApi.Url.count{
-                apiCaller(url: ConstantNewsApi.Url[i].newsUrl , category: Category.categoryList[i].categoryName)
+            for i in 0..<Category.categoryList.count{
+                let apiUrl = ApiMaker.shared.apiMaker(row: i)
+                apiCaller(url: apiUrl , category: Category.categoryList[i].categoryName)
             }
         } else {
             if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[0].categoryName){
@@ -269,7 +287,17 @@ extension ViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         CGSize(width: 70, height: 80)
     }
-    func gridView(){
+}
+extension ViewController{
+    func gridViewListView(viewStyle: Bool){
+        gridList.isUserInteractionEnabled = false
+        newsCollectionView.startInteractiveTransition(to: viewStyle ? gridView() : listView()){[weak self]_,_ in
+            guard let self = self else{return}
+            self.gridList.isUserInteractionEnabled = true
+        }
+        newsCollectionView.finishInteractiveTransition()
+    }
+    func gridView()->UICollectionViewLayout{
         let insets = NSDirectionalEdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3)
         let itemSize  = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1/2), heightDimension: .fractionalHeight(1))
         let item =  NSCollectionLayoutItem(layoutSize: itemSize)
@@ -280,9 +308,24 @@ extension ViewController: UICollectionViewDelegateFlowLayout{
         group.contentInsets = groupInsets
         let section  = NSCollectionLayoutSection(group: group)
         let compLayout = UICollectionViewCompositionalLayout(section: section)
-        newsCollectionView.collectionViewLayout = compLayout
+        return compLayout
+    }
+    func listView()->UICollectionViewLayout{
+        let insets = NSDirectionalEdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3)
+        let itemSize  = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+
+        let item =  NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = insets
+        let horGroup = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1/2))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: horGroup, subitems: [item])
+
+        let section  = NSCollectionLayoutSection(group: group)
+        let compLayout = UICollectionViewCompositionalLayout(section: section)
+        return compLayout
     }
 }
+    
+
 
 
 
