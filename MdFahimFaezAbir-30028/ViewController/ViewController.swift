@@ -21,10 +21,11 @@ class ViewController: UIViewController {
     var indexPath: IndexPath?
     var selectedCategoryIndexPath = IndexPath(row: 0, section: 0)
     var flag = true
+    let defaults = UserDefaults.standard
+    let time = Date()
+    let dateFormatter = DateFormatter()
     override func viewDidLoad() {
         super.viewDidLoad()
-        // navigationController?.hidesBarsOnTap = true
-        //navigationController?.isNavigationBarHidden = true
         userImage.layer.cornerRadius = userImage.bounds.size.width / 2.0
         searchField.layer.cornerRadius = 10
         searchField.delegate = self
@@ -42,9 +43,27 @@ class ViewController: UIViewController {
         collectionView.register(nib, forCellWithReuseIdentifier: Constants.collectionViewNib)
         let nib2 = UINib(nibName: "NewsCollectionViewCell", bundle: nil)
         newsCollectionView.register(nib2, forCellWithReuseIdentifier: Constants.newsCell)
-       
         setSearchBarImage()
         checkInitialState()
+        checkAutoRefreshing()
+    }
+    func checkAutoRefreshing(){
+        let previousRefreshTime = defaults.object(forKey: "time")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let timeString = dateFormatter.string(from: time)
+       
+        if let previousRefreshTime  = previousRefreshTime as? String{
+            if TimeConvertion.shared.returnMinutes(time: previousRefreshTime) - TimeConvertion.shared.returnMinutes(time: timeString) > 3{
+                print("refreshing.....")
+                for i in 0..<Category.categoryList.count{
+                    CoreDataDB.shared.deleteCached(category: Category.categoryList[i].categoryName)
+                    newsFromDB.removeAll()
+                    print(ApiMaker.shared.apiMaker(row: i))
+                    let apiUrl = ApiMaker.shared.apiMaker(row: i)
+                    apiCaller(url: apiUrl , category: Category.categoryList[i].categoryName)
+                }
+            }
+        }
     }
     @IBAction func changeLayout(_ sender: Any) {
         if flag{
@@ -69,13 +88,11 @@ class ViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
-        
     }
     override func viewDidDisappear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = false
     }
     func checkInitialState(){
-        let defaults = UserDefaults.standard
         if !defaults.bool(forKey: "hasLaunchedBefore") {
             defaults.set(true, forKey: "hasLaunchedBefore")
             print("first user")
@@ -119,13 +136,14 @@ class ViewController: UIViewController {
                     self.newsCollectionView.reloadData()
                 }
             }
-            
-           
         }
     }
 }
 extension ViewController{
     func apiCaller(url: String, category: String){
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let timeString = dateFormatter.string(from: time)
+        defaults.set(timeString, forKey: "time")
         NewsDataCollection.sheared.getJson(url: url, completion: { result in
             switch result{
             case .success(let news):
@@ -139,7 +157,6 @@ extension ViewController{
                         self.newsFromDB = newsDb
                     }
                   self.newsCollectionView.reloadData()
-                    
                 }
             case .failure(let error):
                 print(error)
@@ -152,7 +169,7 @@ extension ViewController{
         for news in articles{
             if let author = news.author, let content = news.content, let newsDescription = news.description , let publishAt = news.publishedAt, let sourceName = news.source?.name, let title = news.title, let url = news.url, let urlToImage = news.urlToImage{
                 data = NewsData(author: author, category: category, content: content, newsDescription: newsDescription, publishedAt: publishAt, sourceName: sourceName, title: title, url: url, urlToImage: urlToImage)
-                print(data)
+               // print(data)
                 CoreDataDB.shared.savePost(article: data)
                 
             }
@@ -174,7 +191,7 @@ extension ViewController{
             if let showNewsVc = segue.destination as? ShowNewsVc{
                 if let row = indexPath?.row{
                     showNewsVc.titleFromVc  = newsFromDB[row].title ?? ""
-                    showNewsVc.dateFromVc =  TimeConvertion.shared.timeConvert(time: newsFromDB[row].publishedAt ?? " " )
+                    showNewsVc.dateFromVc = newsFromDB[row].publishedAt ?? " "
                     showNewsVc.categoryFromVc = newsFromDB[row].category ?? ""
                     showNewsVc.imageFromVc = newsFromDB[row].urlToImage ?? ""
                     showNewsVc.descriptionFromVc = newsFromDB[row].newsDescription ?? ""
@@ -268,7 +285,6 @@ extension ViewController: UICollectionViewDataSource{
             CoreDataDBBookMark.shared.addBookmark(article: data)
         }else{
             showAlert()
-            //print("alreadyAdded")
         }
     }
     func showAlert(){

@@ -86,7 +86,7 @@ extension BookMarkVc{
             if let showNewsVc = segue.destination as? ShowNewsVc{
                 if let row = indexPath?.row{
                     showNewsVc.titleFromVc  = bookMarkFromDb[row].title ?? ""
-                    showNewsVc.dateFromVc =  TimeConvertion.shared.timeConvert(time: bookMarkFromDb[row].publishedAt ?? " " )
+                    showNewsVc.dateFromVc =  bookMarkFromDb[row].publishedAt ?? " "
                     showNewsVc.categoryFromVc = bookMarkFromDb[row].category ?? ""
                     showNewsVc.imageFromVc = bookMarkFromDb[row].urlToImage ?? ""
                     showNewsVc.descriptionFromVc = bookMarkFromDb[row].newsDescription ?? ""
