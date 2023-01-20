@@ -14,6 +14,25 @@ class CoreDataDB{
     private init(){}
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    func checkDB(article: NewsData,category: String)-> Bool{
+        let fetchRequest = NSFetchRequest<NewsDB>(entityName: "NewsDB")
+        let predicate = NSPredicate(format: "category == %@ AND url == %@", category,article.url)
+        fetchRequest.predicate = predicate
+        do{
+            let news = try context.fetch(fetchRequest)
+            //print(news)
+            if news.count == 0{
+                print("\(category) : \(news.count)")
+                return true
+            }
+            else {
+                return false
+            }
+        }catch{
+            print(error)
+            return false
+        }
+    }
     func savePost(article: NewsData){
         print(article.author)
         let news = NewsDB(context: context)

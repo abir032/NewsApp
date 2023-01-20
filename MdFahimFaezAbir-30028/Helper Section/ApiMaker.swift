@@ -12,7 +12,7 @@ struct ApiCategory{
 extension ApiCategory{
     static let country = "us"
     static let pageSize = 20
-    static let apiKey = "cc2c06e5b03b401587cfe9676ab5f0cc"
+    static let apiKey = "43afe041fe2749ac80299ccae0a51779"
     static let category = [ApiCategory(categoryName: ""),ApiCategory(categoryName: "business"), ApiCategory(categoryName: "general"),ApiCategory(categoryName: "entertainment"),ApiCategory(categoryName: "health"),ApiCategory(categoryName: "science"), ApiCategory(categoryName: "sports"),ApiCategory(categoryName: "technology")]
 }
 
