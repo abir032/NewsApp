@@ -66,7 +66,6 @@ class BookMarkVc: UIViewController {
             bookMarkFromDb.reverse()
             tableView.reloadData()
         }
-        
     }
     override func viewDidDisappear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = false
@@ -100,7 +99,6 @@ extension BookMarkVc{
             }
         }
     }
-    
 }
 
 extension BookMarkVc: UITableViewDelegate{
@@ -125,13 +123,11 @@ extension BookMarkVc: UITableViewDataSource{
             cell.newsImage.layer.cornerRadius = 10
             cell.newsImage.sd_setImage(with: URL(string: url))
         }
-        
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         100
     }
-    
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: nil){[weak self]_,_,completion in
             guard let self = self else {return}
@@ -149,11 +145,9 @@ extension BookMarkVc: UITableViewDataSource{
         tableView.deleteRows(at: [indexPath], with: .middle)
         tableView.endUpdates()
     }
-    
 }
 
 // MARK: - Collection View
-
 extension BookMarkVc: UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let cell = categoryCv.cellForItem(at: indexPath) as? BookMarkVcCategoryCell{

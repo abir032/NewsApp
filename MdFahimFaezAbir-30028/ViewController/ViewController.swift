@@ -8,7 +8,7 @@
 import UIKit
 
 class ViewController: UIViewController {
-   
+    
     @IBOutlet weak var gridList: UIButton!
     @IBOutlet weak var searchField: UITextField!
     @IBOutlet weak var userImage: UIImageView!
@@ -52,7 +52,7 @@ class ViewController: UIViewController {
         let previousRefreshTime = defaults.object(forKey: "time")
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         let timeString = dateFormatter.string(from: time)
-       
+        
         if let previousRefreshTime  = previousRefreshTime as? String{
             if TimeConvertion.shared.returnMinutes(time: previousRefreshTime) - TimeConvertion.shared.returnMinutes(time: timeString) > 120{
                 print("refreshing.....")
@@ -157,34 +157,32 @@ extension ViewController{
         let timeString = dateFormatter.string(from: time)
         defaults.set(timeString, forKey: "time")
         NewsDataCollection.sheared.getJson(url: url, completion: {result in
-                switch result{
-                case .success(let news):
-                    self.totalResponse = news?.totalResults
-                    if let article = news?.articles{
-                        self.articles = article
-                    }
-                    DispatchQueue.main.async { [weak self] in
-                        guard let self = self else {return}
-                        self.saveToDb(category: category)
-                        if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[self.selectedCategoryIndexPath.row].categoryName){
-                            self.newsFromDB = newsDb
-                        }
-                        PaginationHelper.shared.countPage(category: category)
-                        self.newsCollectionView.reloadData()
-                    }
-                case .failure(let error):
-                    print(error)
+            switch result{
+            case .success(let news):
+                self.totalResponse = news?.totalResults
+                if let article = news?.articles{
+                    self.articles = article
                 }
-            })
-        
-        
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else {return}
+                    self.saveToDb(category: category)
+                    if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[self.selectedCategoryIndexPath.row].categoryName){
+                        self.newsFromDB = newsDb
+                    }
+                    PaginationHelper.shared.countPage(category: category)
+                    self.newsCollectionView.reloadData()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        })
     }
     func saveToDb(category: String){
         var data: NewsData
         for news in articles{
             if let author = news.author, let content = news.content, let newsDescription = news.description , let publishAt = news.publishedAt, let sourceName = news.source?.name, let title = news.title, let url = news.url, let urlToImage = news.urlToImage{
                 data = NewsData(author: author, category: category, content: content, newsDescription: newsDescription, publishedAt: publishAt, sourceName: sourceName, title: title, url: url, urlToImage: urlToImage)
-               // print(data)
+                // print(data)
                 CoreDataDB.shared.savePost(article: data)
                 
             }
@@ -234,8 +232,8 @@ extension ViewController: UICollectionViewDelegate{
             selectedCategoryIndexPath = indexPath
             collectionView.reloadData()
             if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName){
-                    newsFromDB = newsDb
-                    newsCollectionView.reloadData()
+                newsFromDB = newsDb
+                newsCollectionView.reloadData()
             }
         }
         
@@ -248,7 +246,6 @@ extension ViewController: UICollectionViewDelegate{
                 cell.uiView.backgroundColor = .white
             }
         }
-        
     }
 }
 extension ViewController: UICollectionViewDataSource{
@@ -259,7 +256,6 @@ extension ViewController: UICollectionViewDataSource{
             print(Category.categoryList.count)
             return Category.categoryList.count
         }
-        
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == newsCollectionView{
@@ -274,7 +270,6 @@ extension ViewController: UICollectionViewDataSource{
             item.addToBookMark.tag = indexPath.row
             item.addToBookMark.addTarget(self, action: #selector(addBookmark), for: .touchUpInside)
             return item
-            
         } else{
             let item = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.collectionViewNib, for: indexPath) as! CollectionViewCell
             if selectedCategoryIndexPath == indexPath{
@@ -296,7 +291,6 @@ extension ViewController: UICollectionViewDataSource{
     @objc func addBookmark(sender: UIButton){
         let indexPath = IndexPath(row: sender.tag, section: 0)
         saveToBookMark(row: indexPath.row)
-        
     }
     func saveToBookMark(row: Int){
         let data = NewsData(author: newsFromDB[row].author ?? "Unknown", category: newsFromDB[row].category ?? "Unknown", content: newsFromDB[row].content ?? "Unknown", newsDescription: newsFromDB[row].newsDescription ?? "Unknown", publishedAt: newsFromDB[row].publishedAt ?? "Unknown", sourceName: newsFromDB[row].sourceName ?? "Unknown", title:newsFromDB[row].title ?? "Unknown", url: newsFromDB[row].url ?? "Unknown", urlToImage:newsFromDB[row].urlToImage ?? "Unknown")
@@ -348,18 +342,18 @@ extension ViewController{
     func listView()->UICollectionViewLayout{
         let insets = NSDirectionalEdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3)
         let itemSize  = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
-
+        
         let item =  NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = insets
         let horGroup = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1/2))
         let group = NSCollectionLayoutGroup.vertical(layoutSize: horGroup, subitems: [item])
-
+        
         let section  = NSCollectionLayoutSection(group: group)
         let compLayout = UICollectionViewCompositionalLayout(section: section)
         return compLayout
     }
 }
-    
+
 
 
 

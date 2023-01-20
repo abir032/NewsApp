@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 class CoreDataDBBookMark{
-
+    
     static let shared = CoreDataDBBookMark()
     private init(){}
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -85,12 +85,12 @@ class CoreDataDBBookMark{
         }
         do{
             news = try context.fetch(fetchRequest)
-           // print(news[0].sourceName)
+            // print(news[0].sourceName)
             return news
         }catch{
             print(error)
             return nil
         }
     }
-
+    
 }

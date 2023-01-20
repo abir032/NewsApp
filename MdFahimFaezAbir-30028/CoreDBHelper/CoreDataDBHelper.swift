@@ -12,7 +12,7 @@ import CoreData
 class CoreDataDB{
     static let shared = CoreDataDB()
     private init(){}
-
+    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     func savePost(article: NewsData){
         print(article.author)
@@ -56,7 +56,7 @@ class CoreDataDB{
         }
         do{
             news = try context.fetch(fetchRequest)
-           // print(news[0].sourceName)
+            // print(news[0].sourceName)
             return news
         }catch{
             print(error)
@@ -68,13 +68,13 @@ class CoreDataDB{
         let predicate = NSPredicate(format: "category == %@", category)
         fetchRequest.predicate = predicate
         do{
-        let newsDB = try context.fetch(fetchRequest)
+            let newsDB = try context.fetch(fetchRequest)
             for news in newsDB{
                 context.delete(news)
             }
         }catch{
             print(error)
-
+            
         }
         do{
             try context.save()

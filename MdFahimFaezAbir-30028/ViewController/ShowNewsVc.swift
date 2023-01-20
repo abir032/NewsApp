@@ -2,8 +2,7 @@ import UIKit
 import SDWebImage
 
 class ShowNewsVc: UIViewController {
-    
-    
+
     @IBOutlet weak var newsTitle: UILabel!
     @IBOutlet weak var category: UILabel!
     @IBOutlet weak var author: UILabel!
