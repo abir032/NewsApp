@@ -15,7 +15,8 @@ class TimeConvertion{
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
             let date = dateFormatter.date(from: time)
-            let passedTimeInSecond = Date().timeIntervalSince(date!)
+            guard let date = date else {return ""}
+            let passedTimeInSecond = Date().timeIntervalSince(date)
             let minutes = round(passedTimeInSecond/60)
             if minutes > 59.0{
                 let hour = round(minutes/60)
@@ -32,5 +33,15 @@ class TimeConvertion{
         }else{
             return " "
         }
+    }
+    func returnMinutes(time: String)-> Double{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let date = dateFormatter.date(from: time)
+        guard let date = date else {return 0.0}
+        let passedTimeInSecond =  Date().timeIntervalSince(date)
+        let minutes = round(passedTimeInSecond/60)
+        print(minutes)
+        return minutes
     }
 }

@@ -9,19 +9,24 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var gridList: UIButton!
     @IBOutlet weak var searchField: UITextField!
     @IBOutlet weak var userImage: UIImageView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var tabbar: UITabBarItem!
     @IBOutlet weak var newsCollectionView: UICollectionView!
+    let refreshControl = UIRefreshControl()
     var articles = [Article]()
     var newsFromDB = [NewsDB]()
     var indexPath: IndexPath?
+    var totalResponse: Int?
     var selectedCategoryIndexPath = IndexPath(row: 0, section: 0)
+    var flag = true
+    let defaults = UserDefaults.standard
+    let time = Date()
+    let dateFormatter = DateFormatter()
     override func viewDidLoad() {
         super.viewDidLoad()
-        // navigationController?.hidesBarsOnTap = true
-        //navigationController?.isNavigationBarHidden = true
         userImage.layer.cornerRadius = userImage.bounds.size.width / 2.0
         searchField.layer.cornerRadius = 10
         searchField.delegate = self
@@ -30,22 +35,89 @@ class ViewController: UIViewController {
         collectionView.showsHorizontalScrollIndicator = false
         newsCollectionView.delegate = self
         newsCollectionView.dataSource = self
-        gridView()
+        newsCollectionView.collectionViewLayout = gridView()
+        gridList.setImage(UIImage(systemName:"rectangle.grid.1x2.fill"), for: .normal)
+        refreshControl.addTarget(self, action: #selector(refreshNewsData), for: UIControl.Event.valueChanged)
+        newsCollectionView.addSubview(refreshControl)
         //MARK: - Nib Registration
         let nib  = UINib(nibName: "CollectionViewCell", bundle: nil)
         collectionView.register(nib, forCellWithReuseIdentifier: Constants.collectionViewNib)
         let nib2 = UINib(nibName: "NewsCollectionViewCell", bundle: nil)
         newsCollectionView.register(nib2, forCellWithReuseIdentifier: Constants.newsCell)
-        //apiCaller(url: Constants.allNewsApli, category: "All")
         setSearchBarImage()
+        checkInitialState()
+        checkAutoRefreshing()
+    }
+    func checkAutoRefreshing(){
+        let previousRefreshTime = defaults.object(forKey: "time")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let timeString = dateFormatter.string(from: time)
         
+        if let previousRefreshTime  = previousRefreshTime as? String{
+            if TimeConvertion.shared.returnMinutes(time: previousRefreshTime) - TimeConvertion.shared.returnMinutes(time: timeString) > 120{
+                print("refreshing.....")
+                for i in 0..<Category.categoryList.count{
+                    CoreDataDB.shared.deleteCached(category: Category.categoryList[i].categoryName)
+                    newsFromDB.removeAll()
+                    //print(ApiMaker.shared.apiMaker(row: i)
+                    guard var pageNumer = defaults.dictionary(forKey: "pageCounter") as? [String:Int], let page = pageNumer[Category.categoryList[i].categoryName] else{ return}
+                    let apiUrl = ApiMaker.shared.apiMaker(row: i,page: page)
+                    pageNumer[Category.categoryList[i].categoryName] = 1
+                    defaults.set(pageNumer, forKey:"pageCounter")
+                    print(apiUrl)
+                    apiCaller(url: apiUrl , category: Category.categoryList[i].categoryName)
+                }
+                //defaults.set(<#T##value: Any?##Any?#>, forKey: <#T##String#>)
+            }
+        }
+    }
+    @IBAction func changeLayout(_ sender: Any) {
+        if flag{
+            flag = false
+            gridViewListView(viewStyle: true)
+            gridList.setImage(UIImage(systemName:"rectangle.grid.1x2.fill"), for: .normal)
+            
+        }else{
+            flag = true
+            gridViewListView(viewStyle: false)
+            gridList.setImage(UIImage(systemName:"square.grid.2x2.fill"), for: .normal)
+        }
+    }
+    
+    @objc func refreshNewsData(){
+        CoreDataDB.shared.deleteCached(category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
+        newsFromDB.removeAll()
+        guard var pageNumer = defaults.dictionary(forKey: "pageCounter") as? [String:Int], let page = pageNumer[Category.categoryList[selectedCategoryIndexPath.row].categoryName] else{ return}
+        print(ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row,page: page))
+        apiCaller(url: ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row,page: page), category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
+        pageNumer[Category.categoryList[selectedCategoryIndexPath.row].categoryName] = 1
+        defaults.set(pageNumer, forKey:"pageCounter")
+        newsCollectionView.reloadData()
+        refreshControl.endRefreshing()
     }
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = true
-        
     }
     override func viewDidDisappear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = false
+    }
+    func checkInitialState(){
+        if !defaults.bool(forKey: "hasLaunchedBefore") {
+            defaults.set(true, forKey: "hasLaunchedBefore")
+            print("first user")
+            PaginationHelper.shared.countPage(category: "")
+            for i in 0..<Category.categoryList.count{
+                guard let pageNumer = defaults.dictionary(forKey: "pageCounter") as? [String:Int], let page = pageNumer[Category.categoryList[selectedCategoryIndexPath.row].categoryName] else{ return}
+                let apiUrl = ApiMaker.shared.apiMaker(row: i,page: page)
+                print(apiUrl)
+                apiCaller(url: apiUrl , category: Category.categoryList[i].categoryName)
+            }
+        } else {
+            if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[0].categoryName){
+                self.newsFromDB = newsDb
+                self.newsCollectionView.reloadData()
+            }
+        }
     }
     // MARK: - URL gula vhul ache
     func setSearchBarImage(){
@@ -63,33 +135,54 @@ class ViewController: UIViewController {
         //searchField.
     }
     @objc func searchNews(){
-        // print(searchField.text!)
+        if let searchText = searchField.text{
+            if searchField.text != ""{
+                if let news = CoreDataDB.shared.searchNews(category: Category.categoryList[selectedCategoryIndexPath.row].categoryName, searchText: searchText){
+                    newsFromDB = news
+                    print(newsFromDB.count)
+                    newsCollectionView.reloadData()
+                }
+            }else{
+                if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[selectedCategoryIndexPath.row].categoryName){
+                    self.newsFromDB = newsDb
+                    self.newsCollectionView.reloadData()
+                }
+            }
+        }
     }
 }
 extension ViewController{
     func apiCaller(url: String, category: String){
-        NewsDataCollection.sheared.getJson(url: url, completion: { result in
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let timeString = dateFormatter.string(from: time)
+        defaults.set(timeString, forKey: "time")
+        NewsDataCollection.sheared.getJson(url: url, completion: {result in
             switch result{
             case .success(let news):
+                self.totalResponse = news?.totalResults
                 if let article = news?.articles{
                     self.articles = article
                 }
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else {return}
                     self.saveToDb(category: category)
-                    // self.tableView.reloadData()
+                    if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[self.selectedCategoryIndexPath.row].categoryName){
+                        self.newsFromDB = newsDb
+                    }
+                    PaginationHelper.shared.countPage(category: category)
+                    self.newsCollectionView.reloadData()
                 }
             case .failure(let error):
                 print(error)
             }
         })
-        
     }
     func saveToDb(category: String){
         var data: NewsData
         for news in articles{
             if let author = news.author, let content = news.content, let newsDescription = news.description , let publishAt = news.publishedAt, let sourceName = news.source?.name, let title = news.title, let url = news.url, let urlToImage = news.urlToImage{
                 data = NewsData(author: author, category: category, content: content, newsDescription: newsDescription, publishedAt: publishAt, sourceName: sourceName, title: title, url: url, urlToImage: urlToImage)
-                print(data)
+                // print(data)
                 CoreDataDB.shared.savePost(article: data)
                 
             }
@@ -101,8 +194,7 @@ extension ViewController: UITextFieldDelegate{
         return true
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
-        ///print("adsfhhd")
-        print(searchField.text!)
+        
     }
 }
 // MARK: - Segue Section
@@ -112,7 +204,7 @@ extension ViewController{
             if let showNewsVc = segue.destination as? ShowNewsVc{
                 if let row = indexPath?.row{
                     showNewsVc.titleFromVc  = newsFromDB[row].title ?? ""
-                    showNewsVc.dateFromVc =  TimeConvertion.shared.timeConvert(time: newsFromDB[row].publishedAt ?? " " )
+                    showNewsVc.dateFromVc = newsFromDB[row].publishedAt ?? " "
                     showNewsVc.categoryFromVc = newsFromDB[row].category ?? ""
                     showNewsVc.imageFromVc = newsFromDB[row].urlToImage ?? ""
                     showNewsVc.descriptionFromVc = newsFromDB[row].newsDescription ?? ""
@@ -125,7 +217,6 @@ extension ViewController{
         }
     }
 }
-
 
 // MARK: - Collection View
 
@@ -155,7 +246,6 @@ extension ViewController: UICollectionViewDelegate{
                 cell.uiView.backgroundColor = .white
             }
         }
-        
     }
 }
 extension ViewController: UICollectionViewDataSource{
@@ -166,7 +256,6 @@ extension ViewController: UICollectionViewDataSource{
             print(Category.categoryList.count)
             return Category.categoryList.count
         }
-        
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == newsCollectionView{
@@ -181,7 +270,6 @@ extension ViewController: UICollectionViewDataSource{
             item.addToBookMark.tag = indexPath.row
             item.addToBookMark.addTarget(self, action: #selector(addBookmark), for: .touchUpInside)
             return item
-            
         } else{
             let item = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.collectionViewNib, for: indexPath) as! CollectionViewCell
             if selectedCategoryIndexPath == indexPath{
@@ -193,10 +281,16 @@ extension ViewController: UICollectionViewDataSource{
             return item
         }
     }
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let totalResponse = totalResponse else {return}
+        if (newsFromDB.count-1) == indexPath.row && newsFromDB.count < totalResponse{
+            guard let pageNumer = defaults.dictionary(forKey: "pageCounter") as? [String:Int], let page = pageNumer[Category.categoryList[selectedCategoryIndexPath.row].categoryName] else{ return}
+            apiCaller(url: ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row, page: page), category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
+        }
+    }
     @objc func addBookmark(sender: UIButton){
         let indexPath = IndexPath(row: sender.tag, section: 0)
         saveToBookMark(row: indexPath.row)
-        
     }
     func saveToBookMark(row: Int){
         let data = NewsData(author: newsFromDB[row].author ?? "Unknown", category: newsFromDB[row].category ?? "Unknown", content: newsFromDB[row].content ?? "Unknown", newsDescription: newsFromDB[row].newsDescription ?? "Unknown", publishedAt: newsFromDB[row].publishedAt ?? "Unknown", sourceName: newsFromDB[row].sourceName ?? "Unknown", title:newsFromDB[row].title ?? "Unknown", url: newsFromDB[row].url ?? "Unknown", urlToImage:newsFromDB[row].urlToImage ?? "Unknown")
@@ -204,7 +298,6 @@ extension ViewController: UICollectionViewDataSource{
             CoreDataDBBookMark.shared.addBookmark(article: data)
         }else{
             showAlert()
-            //print("alreadyAdded")
         }
     }
     func showAlert(){
@@ -223,7 +316,17 @@ extension ViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         CGSize(width: 70, height: 80)
     }
-    func gridView(){
+}
+extension ViewController{
+    func gridViewListView(viewStyle: Bool){
+        gridList.isUserInteractionEnabled = false
+        newsCollectionView.startInteractiveTransition(to: viewStyle ? gridView() : listView()){[weak self]_,_ in
+            guard let self = self else{return}
+            self.gridList.isUserInteractionEnabled = true
+        }
+        newsCollectionView.finishInteractiveTransition()
+    }
+    func gridView()->UICollectionViewLayout{
         let insets = NSDirectionalEdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3)
         let itemSize  = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1/2), heightDimension: .fractionalHeight(1))
         let item =  NSCollectionLayoutItem(layoutSize: itemSize)
@@ -234,9 +337,24 @@ extension ViewController: UICollectionViewDelegateFlowLayout{
         group.contentInsets = groupInsets
         let section  = NSCollectionLayoutSection(group: group)
         let compLayout = UICollectionViewCompositionalLayout(section: section)
-        newsCollectionView.collectionViewLayout = compLayout
+        return compLayout
+    }
+    func listView()->UICollectionViewLayout{
+        let insets = NSDirectionalEdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3)
+        let itemSize  = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        
+        let item =  NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = insets
+        let horGroup = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1/2))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: horGroup, subitems: [item])
+        
+        let section  = NSCollectionLayoutSection(group: group)
+        let compLayout = UICollectionViewCompositionalLayout(section: section)
+        return compLayout
     }
 }
+
+
 
 
 

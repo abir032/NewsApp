@@ -17,7 +17,6 @@ class WebView: UIViewController {
         loadWebView()
     }
     func loadWebView(){
-        
         if let url = URL(string: url) {
             let request = URLRequest(url: url)
             webView.load(request)
@@ -25,16 +24,12 @@ class WebView: UIViewController {
         }
     }
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        
         if keyPath == "loading" {
-            
             if webView.isLoading {
-                
                 showIndicator.startAnimating()
                 showIndicator.isHidden = false
                 
             }else {
-                
                 showIndicator.stopAnimating()
                 showIndicator.isHidden = true
                 

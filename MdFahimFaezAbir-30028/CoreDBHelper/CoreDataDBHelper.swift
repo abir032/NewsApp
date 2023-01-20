@@ -12,7 +12,7 @@ import CoreData
 class CoreDataDB{
     static let shared = CoreDataDB()
     private init(){}
-
+    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     func savePost(article: NewsData){
         print(article.author)
@@ -47,22 +47,39 @@ class CoreDataDB{
             return nil
         }
     }
-
-//    func deletePost(indexPath: IndexPath, postList: [Userpost]) {
-//        let post = postList[indexPath.row]
-//        context.delete(post)
-//        do{
-//            try context.save()
-//        }catch{
-//            print(error)
-//        }
-//    }
-//    func updatePost(indexPath: Int, postList: [Userpost]){
-//        let post = postList[indexPath]
-//        do{
-//            try context.save()
-//        }catch{
-//            print(error)
-//        }
-//    }
+    func searchNews(category: String, searchText: String)-> [NewsDB]? {
+        var news = [NewsDB]()
+        let fetchRequest = NSFetchRequest<NewsDB>(entityName: "NewsDB")
+        let predicate = NSPredicate(format: "category == %@ AND (title CONTAINS %@ OR sourceName CONTAINS %@ OR author CONTAINS %@)",category,searchText,searchText,searchText)
+        if searchText != " "{
+            fetchRequest.predicate = predicate
+        }
+        do{
+            news = try context.fetch(fetchRequest)
+            // print(news[0].sourceName)
+            return news
+        }catch{
+            print(error)
+            return nil
+        }
+    }
+    func deleteCached(category: String) {
+        let fetchRequest = NSFetchRequest<NewsDB>(entityName: "NewsDB")
+        let predicate = NSPredicate(format: "category == %@", category)
+        fetchRequest.predicate = predicate
+        do{
+            let newsDB = try context.fetch(fetchRequest)
+            for news in newsDB{
+                context.delete(news)
+            }
+        }catch{
+            print(error)
+            
+        }
+        do{
+            try context.save()
+        }catch{
+            print(error)
+        }
+    }
 }
