@@ -51,6 +51,7 @@ class BookMarkVc: UIViewController {
             }else{
                 if let bookmark = CategorySectionHelper.shared.selectCategoryForBoomark(category: Category.categoryList[selectIndexPath.row].categoryName){
                     bookMarkFromDb = bookmark
+                    bookMarkFromDb.reverse()
                     tableView.reloadData()
                 }
             }
@@ -62,6 +63,7 @@ class BookMarkVc: UIViewController {
         categoryCv.reloadData()
         if let bookmark = CategorySectionHelper.shared.selectCategoryForBoomark(category: Category.categoryList[selectIndexPath.row].categoryName){
             bookMarkFromDb = bookmark
+            bookMarkFromDb.reverse()
             tableView.reloadData()
         }
         

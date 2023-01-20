@@ -40,7 +40,6 @@ class TimeConvertion{
         let date = dateFormatter.date(from: time)
         guard let date = date else {return 0.0}
         let passedTimeInSecond =  Date().timeIntervalSince(date)
-        print(passedTimeInSecond)
         let minutes = round(passedTimeInSecond/60)
         print(minutes)
         return minutes

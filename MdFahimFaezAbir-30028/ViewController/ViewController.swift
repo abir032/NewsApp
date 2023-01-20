@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     var articles = [Article]()
     var newsFromDB = [NewsDB]()
     var indexPath: IndexPath?
+    var totalResponse: Int?
     var selectedCategoryIndexPath = IndexPath(row: 0, section: 0)
     var flag = true
     let defaults = UserDefaults.standard
@@ -53,15 +54,20 @@ class ViewController: UIViewController {
         let timeString = dateFormatter.string(from: time)
        
         if let previousRefreshTime  = previousRefreshTime as? String{
-            if TimeConvertion.shared.returnMinutes(time: previousRefreshTime) - TimeConvertion.shared.returnMinutes(time: timeString) > 3{
+            if TimeConvertion.shared.returnMinutes(time: previousRefreshTime) - TimeConvertion.shared.returnMinutes(time: timeString) > 120{
                 print("refreshing.....")
                 for i in 0..<Category.categoryList.count{
                     CoreDataDB.shared.deleteCached(category: Category.categoryList[i].categoryName)
                     newsFromDB.removeAll()
-                    print(ApiMaker.shared.apiMaker(row: i))
-                    let apiUrl = ApiMaker.shared.apiMaker(row: i)
+                    //print(ApiMaker.shared.apiMaker(row: i)
+                    guard var pageNumer = defaults.dictionary(forKey: "pageCounter") as? [String:Int], let page = pageNumer[Category.categoryList[i].categoryName] else{ return}
+                    let apiUrl = ApiMaker.shared.apiMaker(row: i,page: page)
+                    pageNumer[Category.categoryList[i].categoryName] = 1
+                    defaults.set(pageNumer, forKey:"pageCounter")
+                    print(apiUrl)
                     apiCaller(url: apiUrl , category: Category.categoryList[i].categoryName)
                 }
+                //defaults.set(<#T##value: Any?##Any?#>, forKey: <#T##String#>)
             }
         }
     }
@@ -81,8 +87,11 @@ class ViewController: UIViewController {
     @objc func refreshNewsData(){
         CoreDataDB.shared.deleteCached(category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
         newsFromDB.removeAll()
-        print(ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row))
-        apiCaller(url: ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row), category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
+        guard var pageNumer = defaults.dictionary(forKey: "pageCounter") as? [String:Int], let page = pageNumer[Category.categoryList[selectedCategoryIndexPath.row].categoryName] else{ return}
+        print(ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row,page: page))
+        apiCaller(url: ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row,page: page), category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
+        pageNumer[Category.categoryList[selectedCategoryIndexPath.row].categoryName] = 1
+        defaults.set(pageNumer, forKey:"pageCounter")
         newsCollectionView.reloadData()
         refreshControl.endRefreshing()
     }
@@ -96,8 +105,11 @@ class ViewController: UIViewController {
         if !defaults.bool(forKey: "hasLaunchedBefore") {
             defaults.set(true, forKey: "hasLaunchedBefore")
             print("first user")
+            PaginationHelper.shared.countPage(category: "")
             for i in 0..<Category.categoryList.count{
-                let apiUrl = ApiMaker.shared.apiMaker(row: i)
+                guard let pageNumer = defaults.dictionary(forKey: "pageCounter") as? [String:Int], let page = pageNumer[Category.categoryList[selectedCategoryIndexPath.row].categoryName] else{ return}
+                let apiUrl = ApiMaker.shared.apiMaker(row: i,page: page)
+                print(apiUrl)
                 apiCaller(url: apiUrl , category: Category.categoryList[i].categoryName)
             }
         } else {
@@ -144,24 +156,27 @@ extension ViewController{
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         let timeString = dateFormatter.string(from: time)
         defaults.set(timeString, forKey: "time")
-        NewsDataCollection.sheared.getJson(url: url, completion: { result in
-            switch result{
-            case .success(let news):
-                if let article = news?.articles{
-                    self.articles = article
-                }
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else {return}
-                  self.saveToDb(category: category)
-                    if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[self.selectedCategoryIndexPath.row].categoryName){
-                        self.newsFromDB = newsDb
+        NewsDataCollection.sheared.getJson(url: url, completion: {result in
+                switch result{
+                case .success(let news):
+                    self.totalResponse = news?.totalResults
+                    if let article = news?.articles{
+                        self.articles = article
                     }
-                  self.newsCollectionView.reloadData()
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else {return}
+                        self.saveToDb(category: category)
+                        if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[self.selectedCategoryIndexPath.row].categoryName){
+                            self.newsFromDB = newsDb
+                        }
+                        PaginationHelper.shared.countPage(category: category)
+                        self.newsCollectionView.reloadData()
+                    }
+                case .failure(let error):
+                    print(error)
                 }
-            case .failure(let error):
-                print(error)
-            }
-        })
+            })
+        
         
     }
     func saveToDb(category: String){
@@ -205,7 +220,6 @@ extension ViewController{
     }
 }
 
-
 // MARK: - Collection View
 
 extension ViewController: UICollectionViewDelegate{
@@ -219,11 +233,9 @@ extension ViewController: UICollectionViewDelegate{
             cell.uiView.backgroundColor = UIColor(named: "customBlack")
             selectedCategoryIndexPath = indexPath
             collectionView.reloadData()
-            Task{
-                if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName){
+            if let newsDb = CategorySectionHelper.shared.selectCategory(category: Category.categoryList[indexPath.row].categoryName){
                     newsFromDB = newsDb
                     newsCollectionView.reloadData()
-                }
             }
         }
         
@@ -272,6 +284,13 @@ extension ViewController: UICollectionViewDataSource{
             item.categoryName.text = Category.categoryList[indexPath.row].categoryName
             print(indexPath.row)
             return item
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let totalResponse = totalResponse else {return}
+        if (newsFromDB.count-1) == indexPath.row && newsFromDB.count < totalResponse{
+            guard let pageNumer = defaults.dictionary(forKey: "pageCounter") as? [String:Int], let page = pageNumer[Category.categoryList[selectedCategoryIndexPath.row].categoryName] else{ return}
+            apiCaller(url: ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row, page: page), category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
         }
     }
     @objc func addBookmark(sender: UIButton){
