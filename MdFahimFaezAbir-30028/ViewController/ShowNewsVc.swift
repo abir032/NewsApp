@@ -44,6 +44,7 @@ class ShowNewsVc: UIViewController {
         let data = NewsData(author: authorFromVc, category: categoryFromVc, content: contentFromVc, newsDescription: descriptionFromVc, publishedAt: dateFromVc, sourceName: sourceNameFromVc, title:titleFromVc, url: fullnewsUrl, urlToImage:imageFromVc)
         if CoreDataDBBookMark.shared.checkDB(article: data){
             CoreDataDBBookMark.shared.addBookmark(article: data)
+           showSuccessAlert()
         }else{
             showAlert()
         }
@@ -58,6 +59,15 @@ class ShowNewsVc: UIViewController {
         alert.addAction(cancel)
         present(alert, animated: true)
         
+    }
+    func showSuccessAlert(){
+        let alert = UIAlertController(title: "Successfully Added", message: "", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Ok", style: .default){[weak self]_ in
+            guard let self = self else {return}
+            self.dismiss(animated: true)
+        }
+        alert.addAction(cancel)
+        present(alert, animated: true)
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == Constants.showWebView{

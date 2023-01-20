@@ -21,7 +21,7 @@ class ViewController: UIViewController {
     var indexPath: IndexPath?
     var totalResponse: Int?
     var selectedCategoryIndexPath = IndexPath(row: 0, section: 0)
-    var flag = true
+    var flag = false
     let defaults = UserDefaults.standard
     let time = Date()
     let dateFormatter = DateFormatter()
@@ -61,9 +61,9 @@ class ViewController: UIViewController {
                     newsFromDB.removeAll()
                     //print(ApiMaker.shared.apiMaker(row: i)
                     guard var pageNumer = defaults.dictionary(forKey: "pageCounter") as? [String:Int], let page = pageNumer[Category.categoryList[i].categoryName] else{ return}
-                    let apiUrl = ApiMaker.shared.apiMaker(row: i,page: page)
                     pageNumer[Category.categoryList[i].categoryName] = 1
                     defaults.set(pageNumer, forKey:"pageCounter")
+                    let apiUrl = ApiMaker.shared.apiMaker(row: i,page: page)
                     print(apiUrl)
                     apiCaller(url: apiUrl , category: Category.categoryList[i].categoryName)
                 }
@@ -76,7 +76,6 @@ class ViewController: UIViewController {
             flag = false
             gridViewListView(viewStyle: true)
             gridList.setImage(UIImage(systemName:"rectangle.grid.1x2.fill"), for: .normal)
-            
         }else{
             flag = true
             gridViewListView(viewStyle: false)
@@ -87,11 +86,12 @@ class ViewController: UIViewController {
     @objc func refreshNewsData(){
         CoreDataDB.shared.deleteCached(category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
         newsFromDB.removeAll()
-        guard var pageNumer = defaults.dictionary(forKey: "pageCounter") as? [String:Int], let page = pageNumer[Category.categoryList[selectedCategoryIndexPath.row].categoryName] else{ return}
+        guard var pageNumber = defaults.dictionary(forKey: "pageCounter") as? [String:Int], let page = pageNumber[Category.categoryList[selectedCategoryIndexPath.row].categoryName] else{ return}
+        pageNumber[Category.categoryList[selectedCategoryIndexPath.row].categoryName] = 1
+        defaults.set(pageNumber, forKey:"pageCounter")
         print(ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row,page: page))
         apiCaller(url: ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row,page: page), category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
-        pageNumer[Category.categoryList[selectedCategoryIndexPath.row].categoryName] = 1
-        defaults.set(pageNumer, forKey:"pageCounter")
+        print(pageNumber)
         newsCollectionView.reloadData()
         refreshControl.endRefreshing()
     }
@@ -183,7 +183,9 @@ extension ViewController{
             if let author = news.author, let content = news.content, let newsDescription = news.description , let publishAt = news.publishedAt, let sourceName = news.source?.name, let title = news.title, let url = news.url, let urlToImage = news.urlToImage{
                 data = NewsData(author: author, category: category, content: content, newsDescription: newsDescription, publishedAt: publishAt, sourceName: sourceName, title: title, url: url, urlToImage: urlToImage)
                 // print(data)
-                CoreDataDB.shared.savePost(article: data)
+               if CoreDataDB.shared.checkDB(article: data, category: category){
+                    CoreDataDB.shared.savePost(article: data)
+               }
                 
             }
         }
@@ -288,6 +290,12 @@ extension ViewController: UICollectionViewDataSource{
             apiCaller(url: ApiMaker.shared.apiMaker(row: selectedCategoryIndexPath.row, page: page), category: Category.categoryList[selectedCategoryIndexPath.row].categoryName)
         }
     }
+//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//            let offsetY = scrollView.contentOffset.y
+//                if offsetY >  contentHeight - scrollView.frame.height{
+//                     
+//                }
+//        }
     @objc func addBookmark(sender: UIButton){
         let indexPath = IndexPath(row: sender.tag, section: 0)
         saveToBookMark(row: indexPath.row)
@@ -296,9 +304,19 @@ extension ViewController: UICollectionViewDataSource{
         let data = NewsData(author: newsFromDB[row].author ?? "Unknown", category: newsFromDB[row].category ?? "Unknown", content: newsFromDB[row].content ?? "Unknown", newsDescription: newsFromDB[row].newsDescription ?? "Unknown", publishedAt: newsFromDB[row].publishedAt ?? "Unknown", sourceName: newsFromDB[row].sourceName ?? "Unknown", title:newsFromDB[row].title ?? "Unknown", url: newsFromDB[row].url ?? "Unknown", urlToImage:newsFromDB[row].urlToImage ?? "Unknown")
         if CoreDataDBBookMark.shared.checkDB(article: data){
             CoreDataDBBookMark.shared.addBookmark(article: data)
+            showSuccessAlert()
         }else{
             showAlert()
         }
+    }
+    func showSuccessAlert(){
+        let alert = UIAlertController(title: "Successfully Added", message: "", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Ok", style: .default){[weak self]_ in
+            guard let self = self else {return}
+            self.dismiss(animated: true)
+        }
+        alert.addAction(cancel)
+        present(alert, animated: true)
     }
     func showAlert(){
         print("AlreadyAdded")

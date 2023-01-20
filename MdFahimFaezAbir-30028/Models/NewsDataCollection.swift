@@ -10,12 +10,14 @@ import Foundation
 class NewsDataCollection{
     static let sheared = NewsDataCollection()
     private init(){}
-    let group = DispatchGroup()
+  
     func getJson(url: String, completion: @escaping(Result<Welcome?,Error>)->Void){
         var result: Welcome?
         guard let url = URL(string: url) else {return }
+        let group = DispatchGroup()
+        let urlSession = URLSession.shared
         group.enter()
-        let task = URLSession.shared.dataTask(with: url){ data , response, error in
+        urlSession.dataTask(with: url){ data , response, error in
             if let error = error {
                 print("Server Not found \(error.localizedDescription)")
             }
@@ -26,14 +28,17 @@ class NewsDataCollection{
                 do{
                     result = try JSONDecoder().decode(
                         Welcome.self, from: data)
-                    completion(.success(result))
+                    group.notify(queue: .main){
+                        completion(.success(result))
+                    }
                 }catch{
-                    completion(.failure(error))
+                    group.notify(queue: .main){
+                        completion(.failure(error))
+                    }
                 }//print(result)
+                group.leave()
             }
-        }
-        self.group.leave()
-        task.resume()
+        }.resume()
     }
     
 }
