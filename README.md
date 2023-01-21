@@ -1,5 +1,2 @@
-# NewsApp![image](https://user-images.githubusercontent.com/81462079/213625330-6a20ee01-6a72-4d07-8e24-970477d13977.png)
-![image](https://user-images.githubusercontent.com/81462079/213625411-163e0751-d686-439c-b30f-2cd936d9addb.png)
-![image](https://user-images.githubusercontent.com/81462079/213625473-3239d9f5-25e6-4ac2-b35a-a2bc4d4ec1f8.png)
-![image](https://user-images.githubusercontent.com/81462079/213625592-5412dd8f-3581-45c5-a561-ea0dcbcad9f8.png)
-![image](https://user-images.githubusercontent.com/81462079/213626011-34160295-c7ff-4b79-9e88-60b248a576cf.png)
+
+![Apple iPhone 11 Pro Presentation (1)](https://user-images.githubusercontent.com/81462079/213871929-2d37a2b6-8b8f-4d4b-8536-6cb719a9e35c.png)
